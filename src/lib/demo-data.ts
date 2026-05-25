@@ -120,7 +120,7 @@ export const vencimientos: Vencimiento[] = polizas
     fechaVencimiento: p.vencimiento,
     diasRestantes: p.diasParaVencer,
     prima: p.prima,
-    estadoAviso: p.diasParaVencer <= 7 ? "Aviso enviado" : p.diasParaVencer <= 20 ? "Cliente contactado" : "Pendiente",
+    estadoAviso: (p.diasParaVencer <= 7 ? "Aviso enviado" : p.diasParaVencer <= 20 ? "Cliente contactado" : "Pendiente") as Vencimiento["estadoAviso"],
     comercial: clientes.find((c) => c.id === p.clienteId)?.comercial ?? "—",
   }))
   .sort((a, b) => a.diasRestantes - b.diasRestantes);
