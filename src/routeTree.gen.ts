@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VencimientosRouteImport } from './routes/vencimientos'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as PolizasRouteImport } from './routes/polizas'
 import { Route as FacturacionRouteImport } from './routes/facturacion'
 import { Route as ComisionesRouteImport } from './routes/comisiones'
@@ -20,6 +21,11 @@ import { Route as IndexRouteImport } from './routes/index'
 const VencimientosRoute = VencimientosRouteImport.update({
   id: '/vencimientos',
   path: '/vencimientos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PolizasRoute = PolizasRouteImport.update({
@@ -60,6 +66,7 @@ export interface FileRoutesByFullPath {
   '/comisiones': typeof ComisionesRoute
   '/facturacion': typeof FacturacionRoute
   '/polizas': typeof PolizasRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/vencimientos': typeof VencimientosRoute
 }
 export interface FileRoutesByTo {
@@ -69,6 +76,7 @@ export interface FileRoutesByTo {
   '/comisiones': typeof ComisionesRoute
   '/facturacion': typeof FacturacionRoute
   '/polizas': typeof PolizasRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/vencimientos': typeof VencimientosRoute
 }
 export interface FileRoutesById {
@@ -79,6 +87,7 @@ export interface FileRoutesById {
   '/comisiones': typeof ComisionesRoute
   '/facturacion': typeof FacturacionRoute
   '/polizas': typeof PolizasRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/vencimientos': typeof VencimientosRoute
 }
 export interface FileRouteTypes {
@@ -90,6 +99,7 @@ export interface FileRouteTypes {
     | '/comisiones'
     | '/facturacion'
     | '/polizas'
+    | '/sitemap.xml'
     | '/vencimientos'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -99,6 +109,7 @@ export interface FileRouteTypes {
     | '/comisiones'
     | '/facturacion'
     | '/polizas'
+    | '/sitemap.xml'
     | '/vencimientos'
   id:
     | '__root__'
@@ -108,6 +119,7 @@ export interface FileRouteTypes {
     | '/comisiones'
     | '/facturacion'
     | '/polizas'
+    | '/sitemap.xml'
     | '/vencimientos'
   fileRoutesById: FileRoutesById
 }
@@ -118,6 +130,7 @@ export interface RootRouteChildren {
   ComisionesRoute: typeof ComisionesRoute
   FacturacionRoute: typeof FacturacionRoute
   PolizasRoute: typeof PolizasRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   VencimientosRoute: typeof VencimientosRoute
 }
 
@@ -128,6 +141,13 @@ declare module '@tanstack/react-router' {
       path: '/vencimientos'
       fullPath: '/vencimientos'
       preLoaderRoute: typeof VencimientosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/polizas': {
@@ -182,8 +202,19 @@ const rootRouteChildren: RootRouteChildren = {
   ComisionesRoute: ComisionesRoute,
   FacturacionRoute: FacturacionRoute,
   PolizasRoute: PolizasRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   VencimientosRoute: VencimientosRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
