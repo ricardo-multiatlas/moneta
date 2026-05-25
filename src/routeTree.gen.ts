@@ -9,8 +9,50 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as VencimientosRouteImport } from './routes/vencimientos'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as PolizasRouteImport } from './routes/polizas'
+import { Route as FacturacionRouteImport } from './routes/facturacion'
+import { Route as ComisionesRouteImport } from './routes/comisiones'
+import { Route as ClientesRouteImport } from './routes/clientes'
+import { Route as CaptacionRouteImport } from './routes/captacion'
 import { Route as IndexRouteImport } from './routes/index'
 
+const VencimientosRoute = VencimientosRouteImport.update({
+  id: '/vencimientos',
+  path: '/vencimientos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PolizasRoute = PolizasRouteImport.update({
+  id: '/polizas',
+  path: '/polizas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FacturacionRoute = FacturacionRouteImport.update({
+  id: '/facturacion',
+  path: '/facturacion',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ComisionesRoute = ComisionesRouteImport.update({
+  id: '/comisiones',
+  path: '/comisiones',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ClientesRoute = ClientesRouteImport.update({
+  id: '/clientes',
+  path: '/clientes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CaptacionRoute = CaptacionRouteImport.update({
+  id: '/captacion',
+  path: '/captacion',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -19,28 +61,130 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/captacion': typeof CaptacionRoute
+  '/clientes': typeof ClientesRoute
+  '/comisiones': typeof ComisionesRoute
+  '/facturacion': typeof FacturacionRoute
+  '/polizas': typeof PolizasRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/vencimientos': typeof VencimientosRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/captacion': typeof CaptacionRoute
+  '/clientes': typeof ClientesRoute
+  '/comisiones': typeof ComisionesRoute
+  '/facturacion': typeof FacturacionRoute
+  '/polizas': typeof PolizasRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/vencimientos': typeof VencimientosRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/captacion': typeof CaptacionRoute
+  '/clientes': typeof ClientesRoute
+  '/comisiones': typeof ComisionesRoute
+  '/facturacion': typeof FacturacionRoute
+  '/polizas': typeof PolizasRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/vencimientos': typeof VencimientosRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/captacion'
+    | '/clientes'
+    | '/comisiones'
+    | '/facturacion'
+    | '/polizas'
+    | '/sitemap.xml'
+    | '/vencimientos'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/captacion'
+    | '/clientes'
+    | '/comisiones'
+    | '/facturacion'
+    | '/polizas'
+    | '/sitemap.xml'
+    | '/vencimientos'
+  id:
+    | '__root__'
+    | '/'
+    | '/captacion'
+    | '/clientes'
+    | '/comisiones'
+    | '/facturacion'
+    | '/polizas'
+    | '/sitemap.xml'
+    | '/vencimientos'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CaptacionRoute: typeof CaptacionRoute
+  ClientesRoute: typeof ClientesRoute
+  ComisionesRoute: typeof ComisionesRoute
+  FacturacionRoute: typeof FacturacionRoute
+  PolizasRoute: typeof PolizasRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  VencimientosRoute: typeof VencimientosRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/vencimientos': {
+      id: '/vencimientos'
+      path: '/vencimientos'
+      fullPath: '/vencimientos'
+      preLoaderRoute: typeof VencimientosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/polizas': {
+      id: '/polizas'
+      path: '/polizas'
+      fullPath: '/polizas'
+      preLoaderRoute: typeof PolizasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/facturacion': {
+      id: '/facturacion'
+      path: '/facturacion'
+      fullPath: '/facturacion'
+      preLoaderRoute: typeof FacturacionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/comisiones': {
+      id: '/comisiones'
+      path: '/comisiones'
+      fullPath: '/comisiones'
+      preLoaderRoute: typeof ComisionesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/clientes': {
+      id: '/clientes'
+      path: '/clientes'
+      fullPath: '/clientes'
+      preLoaderRoute: typeof ClientesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/captacion': {
+      id: '/captacion'
+      path: '/captacion'
+      fullPath: '/captacion'
+      preLoaderRoute: typeof CaptacionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -53,6 +197,13 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CaptacionRoute: CaptacionRoute,
+  ClientesRoute: ClientesRoute,
+  ComisionesRoute: ComisionesRoute,
+  FacturacionRoute: FacturacionRoute,
+  PolizasRoute: PolizasRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
+  VencimientosRoute: VencimientosRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

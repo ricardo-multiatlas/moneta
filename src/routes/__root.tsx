@@ -72,14 +72,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "Correduría OS · Moneta Seguros" },
+      { name: "description", content: "CRM + ERP a medida con IA para corredurías de seguros. Clientes, pólizas, vencimientos, comisiones y facturación en un solo lugar." },
+      { name: "author", content: "MultiAtlas" },
+      { property: "og:title", content: "Correduría OS · Moneta Seguros" },
+      { property: "og:description", content: "El sistema interno que merece una correduría moderna en 2026." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
-      { name: "twitter:site", content: "@Lovable" },
     ],
     links: [
       {
