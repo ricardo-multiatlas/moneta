@@ -13,6 +13,8 @@ import { Route as VencimientosRouteImport } from './routes/vencimientos'
 import { Route as TarificadorRouteImport } from './routes/tarificador'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ReportesRouteImport } from './routes/reportes'
+import { Route as RecibosRouteImport } from './routes/recibos'
+import { Route as ProyeccionesRouteImport } from './routes/proyecciones'
 import { Route as PresupuestosRouteImport } from './routes/presupuestos'
 import { Route as PolizasRouteImport } from './routes/polizas'
 import { Route as MiPanelRouteImport } from './routes/mi-panel'
@@ -39,6 +41,7 @@ import { Route as ConfiguracionZonasRouteImport } from './routes/configuracion.z
 import { Route as ConfiguracionWebhooksRouteImport } from './routes/configuracion.webhooks'
 import { Route as ConfiguracionUsuariosRouteImport } from './routes/configuracion.usuarios'
 import { Route as ConfiguracionReglasComisionRouteImport } from './routes/configuracion.reglas-comision'
+import { Route as ConfiguracionPlantillasRouteImport } from './routes/configuracion.plantillas'
 import { Route as ConfiguracionPermisosRouteImport } from './routes/configuracion.permisos'
 import { Route as ConfiguracionPerfilRouteImport } from './routes/configuracion.perfil'
 import { Route as ConfiguracionIntegracionesRouteImport } from './routes/configuracion.integraciones'
@@ -64,6 +67,16 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
 const ReportesRoute = ReportesRouteImport.update({
   id: '/reportes',
   path: '/reportes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RecibosRoute = RecibosRouteImport.update({
+  id: '/recibos',
+  path: '/recibos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProyeccionesRoute = ProyeccionesRouteImport.update({
+  id: '/proyecciones',
+  path: '/proyecciones',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PresupuestosRoute = PresupuestosRouteImport.update({
@@ -197,6 +210,11 @@ const ConfiguracionReglasComisionRoute =
     path: '/reglas-comision',
     getParentRoute: () => ConfiguracionRoute,
   } as any)
+const ConfiguracionPlantillasRoute = ConfiguracionPlantillasRouteImport.update({
+  id: '/plantillas',
+  path: '/plantillas',
+  getParentRoute: () => ConfiguracionRoute,
+} as any)
 const ConfiguracionPermisosRoute = ConfiguracionPermisosRouteImport.update({
   id: '/permisos',
   path: '/permisos',
@@ -248,6 +266,8 @@ export interface FileRoutesByFullPath {
   '/mi-panel': typeof MiPanelRouteWithChildren
   '/polizas': typeof PolizasRouteWithChildren
   '/presupuestos': typeof PresupuestosRoute
+  '/proyecciones': typeof ProyeccionesRoute
+  '/recibos': typeof RecibosRoute
   '/reportes': typeof ReportesRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tarificador': typeof TarificadorRoute
@@ -258,6 +278,7 @@ export interface FileRoutesByFullPath {
   '/configuracion/integraciones': typeof ConfiguracionIntegracionesRoute
   '/configuracion/perfil': typeof ConfiguracionPerfilRoute
   '/configuracion/permisos': typeof ConfiguracionPermisosRoute
+  '/configuracion/plantillas': typeof ConfiguracionPlantillasRoute
   '/configuracion/reglas-comision': typeof ConfiguracionReglasComisionRoute
   '/configuracion/usuarios': typeof ConfiguracionUsuariosRoute
   '/configuracion/webhooks': typeof ConfiguracionWebhooksRoute
@@ -286,6 +307,8 @@ export interface FileRoutesByTo {
   '/mi-panel': typeof MiPanelRouteWithChildren
   '/polizas': typeof PolizasRouteWithChildren
   '/presupuestos': typeof PresupuestosRoute
+  '/proyecciones': typeof ProyeccionesRoute
+  '/recibos': typeof RecibosRoute
   '/reportes': typeof ReportesRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tarificador': typeof TarificadorRoute
@@ -296,6 +319,7 @@ export interface FileRoutesByTo {
   '/configuracion/integraciones': typeof ConfiguracionIntegracionesRoute
   '/configuracion/perfil': typeof ConfiguracionPerfilRoute
   '/configuracion/permisos': typeof ConfiguracionPermisosRoute
+  '/configuracion/plantillas': typeof ConfiguracionPlantillasRoute
   '/configuracion/reglas-comision': typeof ConfiguracionReglasComisionRoute
   '/configuracion/usuarios': typeof ConfiguracionUsuariosRoute
   '/configuracion/webhooks': typeof ConfiguracionWebhooksRoute
@@ -325,6 +349,8 @@ export interface FileRoutesById {
   '/mi-panel': typeof MiPanelRouteWithChildren
   '/polizas': typeof PolizasRouteWithChildren
   '/presupuestos': typeof PresupuestosRoute
+  '/proyecciones': typeof ProyeccionesRoute
+  '/recibos': typeof RecibosRoute
   '/reportes': typeof ReportesRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tarificador': typeof TarificadorRoute
@@ -335,6 +361,7 @@ export interface FileRoutesById {
   '/configuracion/integraciones': typeof ConfiguracionIntegracionesRoute
   '/configuracion/perfil': typeof ConfiguracionPerfilRoute
   '/configuracion/permisos': typeof ConfiguracionPermisosRoute
+  '/configuracion/plantillas': typeof ConfiguracionPlantillasRoute
   '/configuracion/reglas-comision': typeof ConfiguracionReglasComisionRoute
   '/configuracion/usuarios': typeof ConfiguracionUsuariosRoute
   '/configuracion/webhooks': typeof ConfiguracionWebhooksRoute
@@ -365,6 +392,8 @@ export interface FileRouteTypes {
     | '/mi-panel'
     | '/polizas'
     | '/presupuestos'
+    | '/proyecciones'
+    | '/recibos'
     | '/reportes'
     | '/sitemap.xml'
     | '/tarificador'
@@ -375,6 +404,7 @@ export interface FileRouteTypes {
     | '/configuracion/integraciones'
     | '/configuracion/perfil'
     | '/configuracion/permisos'
+    | '/configuracion/plantillas'
     | '/configuracion/reglas-comision'
     | '/configuracion/usuarios'
     | '/configuracion/webhooks'
@@ -403,6 +433,8 @@ export interface FileRouteTypes {
     | '/mi-panel'
     | '/polizas'
     | '/presupuestos'
+    | '/proyecciones'
+    | '/recibos'
     | '/reportes'
     | '/sitemap.xml'
     | '/tarificador'
@@ -413,6 +445,7 @@ export interface FileRouteTypes {
     | '/configuracion/integraciones'
     | '/configuracion/perfil'
     | '/configuracion/permisos'
+    | '/configuracion/plantillas'
     | '/configuracion/reglas-comision'
     | '/configuracion/usuarios'
     | '/configuracion/webhooks'
@@ -441,6 +474,8 @@ export interface FileRouteTypes {
     | '/mi-panel'
     | '/polizas'
     | '/presupuestos'
+    | '/proyecciones'
+    | '/recibos'
     | '/reportes'
     | '/sitemap.xml'
     | '/tarificador'
@@ -451,6 +486,7 @@ export interface FileRouteTypes {
     | '/configuracion/integraciones'
     | '/configuracion/perfil'
     | '/configuracion/permisos'
+    | '/configuracion/plantillas'
     | '/configuracion/reglas-comision'
     | '/configuracion/usuarios'
     | '/configuracion/webhooks'
@@ -480,6 +516,8 @@ export interface RootRouteChildren {
   MiPanelRoute: typeof MiPanelRouteWithChildren
   PolizasRoute: typeof PolizasRouteWithChildren
   PresupuestosRoute: typeof PresupuestosRoute
+  ProyeccionesRoute: typeof ProyeccionesRoute
+  RecibosRoute: typeof RecibosRoute
   ReportesRoute: typeof ReportesRouteWithChildren
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TarificadorRoute: typeof TarificadorRoute
@@ -514,6 +552,20 @@ declare module '@tanstack/react-router' {
       path: '/reportes'
       fullPath: '/reportes'
       preLoaderRoute: typeof ReportesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/recibos': {
+      id: '/recibos'
+      path: '/recibos'
+      fullPath: '/recibos'
+      preLoaderRoute: typeof RecibosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/proyecciones': {
+      id: '/proyecciones'
+      path: '/proyecciones'
+      fullPath: '/proyecciones'
+      preLoaderRoute: typeof ProyeccionesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/presupuestos': {
@@ -698,6 +750,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ConfiguracionReglasComisionRouteImport
       parentRoute: typeof ConfiguracionRoute
     }
+    '/configuracion/plantillas': {
+      id: '/configuracion/plantillas'
+      path: '/plantillas'
+      fullPath: '/configuracion/plantillas'
+      preLoaderRoute: typeof ConfiguracionPlantillasRouteImport
+      parentRoute: typeof ConfiguracionRoute
+    }
     '/configuracion/permisos': {
       id: '/configuracion/permisos'
       path: '/permisos'
@@ -761,6 +820,7 @@ interface ConfiguracionRouteChildren {
   ConfiguracionIntegracionesRoute: typeof ConfiguracionIntegracionesRoute
   ConfiguracionPerfilRoute: typeof ConfiguracionPerfilRoute
   ConfiguracionPermisosRoute: typeof ConfiguracionPermisosRoute
+  ConfiguracionPlantillasRoute: typeof ConfiguracionPlantillasRoute
   ConfiguracionReglasComisionRoute: typeof ConfiguracionReglasComisionRoute
   ConfiguracionUsuariosRoute: typeof ConfiguracionUsuariosRoute
   ConfiguracionWebhooksRoute: typeof ConfiguracionWebhooksRoute
@@ -773,6 +833,7 @@ const ConfiguracionRouteChildren: ConfiguracionRouteChildren = {
   ConfiguracionIntegracionesRoute: ConfiguracionIntegracionesRoute,
   ConfiguracionPerfilRoute: ConfiguracionPerfilRoute,
   ConfiguracionPermisosRoute: ConfiguracionPermisosRoute,
+  ConfiguracionPlantillasRoute: ConfiguracionPlantillasRoute,
   ConfiguracionReglasComisionRoute: ConfiguracionReglasComisionRoute,
   ConfiguracionUsuariosRoute: ConfiguracionUsuariosRoute,
   ConfiguracionWebhooksRoute: ConfiguracionWebhooksRoute,
@@ -848,6 +909,8 @@ const rootRouteChildren: RootRouteChildren = {
   MiPanelRoute: MiPanelRouteWithChildren,
   PolizasRoute: PolizasRouteWithChildren,
   PresupuestosRoute: PresupuestosRoute,
+  ProyeccionesRoute: ProyeccionesRoute,
+  RecibosRoute: RecibosRoute,
   ReportesRoute: ReportesRouteWithChildren,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TarificadorRoute: TarificadorRoute,

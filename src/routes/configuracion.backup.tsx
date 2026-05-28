@@ -1,10 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { ArrowLeft, Database, ExternalLink, Shield, RefreshCw, Save } from "lucide-react";
+import { ArrowLeft, Database, ExternalLink, Shield, RefreshCw, Save, Download } from "lucide-react";
 import { PageShell } from "@/components/app/page-shell";
 import { Card, SectionHeader, StatusBadge } from "@/components/app/ui-bits";
 import { usePermissions } from "@/hooks/use-permissions";
 import { useDialog } from "@/components/app/dialog-provider";
+import { supabase } from "@/lib/supabase";
 
 export const Route = createFileRoute("/configuracion/backup")({
   component: BackupPage,
@@ -66,6 +67,65 @@ function BackupPage() {
     return () => clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pat, projectRef]);
+
+  const [dumpBusy, setDumpBusy] = useState(false);
+
+  // Lista de tablas a incluir en el dump. Se hace SELECT * con service role,
+  // pero las RLS bloquean al usuario que no sea root; root ve todo.
+  const TABLAS_DUMP = [
+    "usuarios", "zonas", "clientes", "polizas", "polizas_anexos", "siniestros",
+    "vencimientos", "leads", "presupuestos", "comisiones_reportes", "comisiones_lineas",
+    "liquidaciones", "facturas", "recibos", "comunicaciones", "comunicaciones_plantillas",
+    "campanas", "campana_envios", "email_eventos", "disponibilidad", "reglas_comision",
+    "firmas", "permisos_granulares", "alertas_vencimiento", "integraciones_aseguradoras",
+    "aprobaciones", "webhook_endpoints", "dashboard_widgets", "reportes_personalizados",
+    "plantillas_contratos", "audit_logs",
+  ];
+
+  const descargarDumpJSON = async () => {
+    setDumpBusy(true);
+    try {
+      const dump: Record<string, any[]> = {};
+      let totalFilas = 0;
+      for (const t of TABLAS_DUMP) {
+        try {
+          const { data, error } = await supabase.from(t).select("*");
+          if (error) {
+            dump[t] = [];
+            continue;
+          }
+          dump[t] = data || [];
+          totalFilas += dump[t].length;
+        } catch {
+          dump[t] = [];
+        }
+      }
+      const payload = {
+        _metadata: {
+          generado_en: new Date().toISOString(),
+          version: "v0.10",
+          total_tablas: TABLAS_DUMP.length,
+          total_filas: totalFilas,
+          aviso: "Dump JSON de Moneta. Contiene datos sensibles — almacenar cifrado.",
+        },
+        ...dump,
+      };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `moneta-backup-${new Date().toISOString().slice(0, 19).replace(/:/g, "-")}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      toast(`Backup JSON descargado (${totalFilas} filas en ${TABLAS_DUMP.length} tablas)`, "success");
+    } catch (e: any) {
+      toast("Error generando dump: " + (e?.message || String(e)), "error");
+    } finally {
+      setDumpBusy(false);
+    }
+  };
 
   const crearBackup = async () => {
     if (!pat) { toast("Necesitas un Personal Access Token.", "warning"); return; }
@@ -131,10 +191,28 @@ function BackupPage() {
             <div className="flex items-start gap-2.5 text-[12px]">
               <Database className="size-4 text-info shrink-0 mt-0.5" />
               <div className="text-ink-muted">
-                <strong className="text-info">Supabase ya hace backups diarios automáticos.</strong> Este botón crea un
-                snapshot manual adicional vía Management API. Útil antes de migraciones o despliegues sensibles.
+                <strong className="text-info">Supabase ya hace backups diarios automáticos.</strong> Las opciones de
+                aquí son extras: dump JSON descargable (sin PAT) o snapshot via Management API (requiere PAT).
               </div>
             </div>
+          </Card>
+
+          <Card className="p-5">
+            <SectionHeader
+              title="Descargar dump JSON"
+              hint="Backup completo de todas las tablas como archivo JSON. No requiere PAT. Útil para auditorías RGPD."
+            />
+            <button
+              type="button"
+              onClick={descargarDumpJSON}
+              disabled={dumpBusy}
+              className="text-[12px] font-medium py-2 px-3 rounded-md bg-foreground text-background hover:brightness-110 cursor-pointer disabled:opacity-50 flex items-center gap-1.5"
+            >
+              <Download className="size-3.5" /> {dumpBusy ? "Generando dump…" : "Descargar backup JSON"}
+            </button>
+            <p className="text-[10px] text-ink-subtle mt-2">
+              El archivo contiene datos sensibles. Guárdalo cifrado o en almacenamiento seguro.
+            </p>
           </Card>
 
           <Card className="p-5">

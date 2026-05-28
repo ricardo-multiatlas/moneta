@@ -22,6 +22,7 @@ import {
   CheckCheck,
   LayoutGrid,
   Wand2,
+  Receipt,
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { usePermissions, type Rol } from "@/hooks/use-permissions";
@@ -52,8 +53,10 @@ const nav: NavItem[] = [
   { to: "/comisiones", label: "Comisiones", icon: Wallet, allow: ["root", "admin", "jefe_zona", "comercial"] },
   // Facturación: secretaria NO ve financiero
   { to: "/facturacion", label: "Facturación", icon: ReceiptText, allow: ["root", "admin", "jefe_zona", "comercial"] },
+  { to: "/recibos", label: "Recibos", icon: Receipt, allow: ["root", "admin", "jefe_zona", "comercial", "secretaria"] },
   { to: "/captacion", label: "Captación", icon: TrendingUp },
   { to: "/analisis", label: "Análisis", icon: BarChart3, allow: ["root", "admin", "jefe_zona"] },
+  { to: "/proyecciones", label: "Proyecciones", icon: TrendingUp, allow: ["root", "admin", "jefe_zona"] },
   { to: "/presupuestos", label: "Presupuestos", icon: FileSignature, allow: ["root", "admin", "jefe_zona", "comercial"] },
   { to: "/tarificador", label: "Tarificador", icon: Calculator, allow: ["root", "admin", "jefe_zona", "comercial"] },
   { to: "/comunicaciones", label: "Comunicaciones", icon: Send, allow: ["root", "admin", "jefe_zona"] },

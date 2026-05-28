@@ -1,5 +1,5 @@
 import { createFileRoute, useRouter, Link, Outlet, useRouterState } from "@tanstack/react-router";
-import { Database, KeyRound, ShieldCheck, Trash2, RefreshCw, History, Plus, Pencil, X, Users, Building2, Lock, Sliders, HardDrive, BellRing, Plug, Webhook } from "lucide-react";
+import { Database, KeyRound, ShieldCheck, Trash2, RefreshCw, History, Plus, Pencil, X, Users, Building2, Lock, Sliders, HardDrive, BellRing, Plug, Webhook, FileText } from "lucide-react";
 import { useState } from "react";
 import { PageShell } from "@/components/app/page-shell";
 import { Card, SectionHeader } from "@/components/app/ui-bits";
@@ -163,6 +163,11 @@ function ConfiguracionPage() {
         <RoleGate allow={["root", "admin"]}>
           <a href="/configuracion/webhooks" className="text-[12px] font-medium py-1.5 px-3 rounded-md ring-1 ring-border hover:bg-secondary flex items-center gap-1.5 cursor-pointer">
             <Webhook className="size-3.5" /> Webhooks
+          </a>
+        </RoleGate>
+        <RoleGate allow={["root", "admin", "secretaria"]}>
+          <a href="/configuracion/plantillas" className="text-[12px] font-medium py-1.5 px-3 rounded-md ring-1 ring-border hover:bg-secondary flex items-center gap-1.5 cursor-pointer">
+            <FileText className="size-3.5" /> Plantillas contratos
           </a>
         </RoleGate>
       </div>
