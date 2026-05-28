@@ -107,39 +107,42 @@ function ProyeccionesPage() {
       </Card>
 
       <Card className="p-4 mb-6">
-        <div className="flex items-center gap-4">
-          <label className="text-[12px] font-medium text-ink-subtle">Tasa de renovación esperada:</label>
+        <label htmlFor="tasa-renovacion" className="flex items-center gap-4">
+          <span className="text-[12px] font-medium text-ink-subtle">Tasa de renovación esperada:</span>
           <input
+            id="tasa-renovacion"
             type="range"
             min="50"
             max="100"
             step="5"
             value={tasaRenovacion}
             onChange={(e) => setTasaRenovacion(Number(e.target.value))}
+            title="Tasa de renovación esperada (50-100%)"
+            aria-label="Tasa de renovación esperada en porcentaje"
             className="flex-1 max-w-xs"
           />
-          <span className="text-[14px] font-bold text-brand min-w-[3rem]">{tasaRenovacion}%</span>
-        </div>
+          <span className="text-[14px] font-bold text-brand min-w-12">{tasaRenovacion}%</span>
+        </label>
       </Card>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-        <KpiCard label="Pólizas a renovar" value={String(totalPolizasRenovar)} hint="próximos 12 meses" />
+        <KpiCard label="Pólizas a renovar" value={String(totalPolizasRenovar)} hint="próximos 12 meses · no depende del %" />
         <KpiCard
           label="Prima a vencer"
           value={`${(totalPrimaTeorico / 1000).toFixed(1)}k €`}
-          hint="100% renovación teórico"
+          hint="teórico 100% renovación · no depende del %"
           deltaTone="neutral"
         />
         <KpiCard
           label={`Prima proyectada @ ${tasaRenovacion}%`}
           value={`${(totalPrimaProyectada / 1000).toFixed(1)}k €`}
-          hint="lo que esperas ingresar"
+          hint="ingreso esperado correduría"
           deltaTone="success"
         />
         <KpiCard
-          label="Comisión proyectada"
+          label={`Comisión proyectada @ ${tasaRenovacion}%`}
           value={`${(totalComisionProyectada / 1000).toFixed(1)}k €`}
-          hint="ingreso bruto correduría"
+          hint="comisiones a pagar a comerciales"
           deltaTone="brand"
         />
       </div>
