@@ -148,7 +148,13 @@ function ReglasComisionPage() {
       }
     >
       <Card>
-        <SectionHeader title={`${reglas.length} regla(s)`} hint="Ordenadas por prioridad. Mayor número = se evalúa antes." action={<Sliders className="size-4 text-ink-subtle" />} />
+        <div className="px-4 pt-4">
+          <SectionHeader
+            title={reglas.length === 0 ? "Reglas de comisión" : `${reglas.length} regla${reglas.length === 1 ? "" : "s"}`}
+            hint={reglas.length === 0 ? "Aún no hay reglas. Crea la primera con \"Nueva regla\"." : "Ordenadas por prioridad. Mayor número = se evalúa antes."}
+            action={<Sliders className="size-4 text-ink-subtle" />}
+          />
+        </div>
         {reglas.length === 0 ? (
           <div className="p-8 text-center text-[12px] text-ink-subtle">Sin reglas. Crea la primera.</div>
         ) : (

@@ -120,7 +120,12 @@ function ZonasPage() {
       }
     >
       <Card>
-        <SectionHeader title={`${zonas.length} zona${zonas.length === 1 ? "" : "s"}`} />
+        <div className="px-4 pt-4">
+          <SectionHeader
+            title={zonas.length === 0 ? "Zonas configuradas" : `${zonas.length} zona${zonas.length === 1 ? "" : "s"}`}
+            hint={zonas.length === 0 ? "Aún no hay ninguna" : "Click en editar para cambiar jefe o nombre"}
+          />
+        </div>
         {zonas.length === 0 ? (
           <div className="p-8 text-center text-[12px] text-ink-subtle">
             Sin zonas. Crea la primera (ej. "Sevilla Centro", "Triana", "Aljarafe").

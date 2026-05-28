@@ -258,7 +258,12 @@ function UsuariosPage() {
       }
     >
       <Card>
-        <SectionHeader title={`${usuarios.length} usuario${usuarios.length === 1 ? "" : "s"}`} hint="Click en editar para cambiar rol o zona" />
+        <div className="px-4 pt-4">
+          <SectionHeader
+            title={usuarios.length === 0 ? "Equipo" : `${usuarios.length} usuario${usuarios.length === 1 ? "" : "s"}`}
+            hint={usuarios.length === 0 ? "Aún no hay usuarios. Crea el primero con \"Nuevo usuario\"." : "Click en editar para cambiar rol o zona"}
+          />
+        </div>
         {usuarios.length === 0 ? (
           <div className="p-8 text-center text-[12px] text-ink-subtle">Sin usuarios.</div>
         ) : (

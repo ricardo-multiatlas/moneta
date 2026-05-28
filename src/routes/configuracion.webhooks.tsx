@@ -233,8 +233,8 @@ function WebhooksPage() {
       <Card className="mb-6">
         <div className="px-4 py-3 border-b border-border">
           <SectionHeader
-            title={`Webhooks salientes (${endpoints.length})`}
-            hint="El sistema invoca estas URLs cuando ocurren los eventos configurados"
+            title={endpoints.length === 0 ? "Webhooks salientes" : `Webhooks salientes (${endpoints.length})`}
+            hint={endpoints.length === 0 ? "Aún no hay ninguno. Crea el primero con \"Nuevo webhook\"." : "El sistema invoca estas URLs cuando ocurren los eventos configurados"}
           />
         </div>
         {endpoints.length === 0 ? (

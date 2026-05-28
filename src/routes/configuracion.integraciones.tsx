@@ -173,8 +173,8 @@ function IntegracionesPage() {
       <Card>
         <div className="px-4 py-3 border-b border-border">
           <SectionHeader
-            title={`${integraciones.length} aseguradora${integraciones.length === 1 ? "" : "s"}`}
-            hint="Click editar para configurar API key y endpoint"
+            title={integraciones.length === 0 ? "Integraciones con aseguradoras" : `${integraciones.length} aseguradora${integraciones.length === 1 ? "" : "s"}`}
+            hint={integraciones.length === 0 ? "Aún no hay ninguna configurada. Crea la primera." : "Click editar para configurar API key y endpoint"}
           />
         </div>
         {integraciones.length === 0 ? (

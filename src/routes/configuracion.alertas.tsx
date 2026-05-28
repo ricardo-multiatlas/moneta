@@ -229,8 +229,8 @@ function AlertasPage() {
       <Card>
         <div className="px-4 py-3 border-b border-border">
           <SectionHeader
-            title={`${alertas.length} alerta${alertas.length === 1 ? "" : "s"} configurada${alertas.length === 1 ? "" : "s"}`}
-            hint="Filtros vacíos = aplica a todas las pólizas"
+            title={alertas.length === 0 ? "Alertas de vencimiento" : `${alertas.length} alerta${alertas.length === 1 ? "" : "s"} configurada${alertas.length === 1 ? "" : "s"}`}
+            hint={alertas.length === 0 ? "Aún no hay ninguna. Crea la primera con \"Nueva alerta\"." : "Filtros vacíos = aplica a todas las pólizas"}
           />
         </div>
         {alertas.length === 0 ? (
