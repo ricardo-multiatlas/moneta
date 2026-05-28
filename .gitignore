@@ -20,6 +20,15 @@ dist-ssr
 .wrangler/
 .dev.vars
 
+# Env y secretos — NUNCA commitear
+.env
+.env.*
+!.env.example
+*_temp_*.cjs
+*_temp_*.js
+*_temp_*.ts
+_temp_*
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
