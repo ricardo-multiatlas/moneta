@@ -9,9 +9,16 @@ import { usePermissions } from "@/hooks/use-permissions";
 import { crearUsuarioAdminFn, resetPasswordAdminFn, eliminarUsuarioAdminFn, resetMFAAdminFn } from "@/lib/admin-users";
 import { useDialog } from "@/components/app/dialog-provider";
 
+import { z } from "zod";
+
+const searchSchema = z.object({
+  nuevo: z.enum(["root", "jefe_zona", "comercial", "secretaria"]).optional().catch(undefined),
+});
+
 export const Route = createFileRoute("/configuracion/usuarios")({
   component: UsuariosPage,
   head: () => ({ meta: [{ title: "Usuarios · Correduría OS" }] }),
+  validateSearch: searchSchema,
 });
 
 const ROLES = [
@@ -23,6 +30,7 @@ const ROLES = [
 
 function UsuariosPage() {
   const router = useRouter();
+  const { nuevo: rolPreseleccionado } = Route.useSearch();
   const { esRoot, esJefeZona, perfil, loading } = usePermissions();
   const { toast, confirm, prompt } = useDialog();
   const [usuariosAll, setUsuariosAll] = useState<any[]>([]);
@@ -56,6 +64,17 @@ function UsuariosPage() {
   };
   useEffect(() => { cargar(); }, []);
 
+  // Si llega ?nuevo=comercial (u otro rol) desde otra pantalla, abrir el modal
+  // de nuevo usuario con ese rol pre-seleccionado. Una sola vez.
+  useEffect(() => {
+    if (rolPreseleccionado) {
+      abrirNuevo(rolPreseleccionado);
+      // Limpiar el query param para que recargar no vuelva a abrirlo
+      router.navigate({ to: "/configuracion/usuarios", search: {}, replace: true });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rolPreseleccionado]);
+
   // Filtrar: jefe_zona solo ve los de su zona (UX, RLS también lo aplica)
   const usuarios = useMemo(() => {
     if (esRoot) return usuariosAll;
@@ -84,13 +103,13 @@ function UsuariosPage() {
     );
   }
 
-  const abrirNuevo = () => {
+  const abrirNuevo = (rolForzado?: string) => {
     setEditId(null);
     // Si es jefe_zona, se fuerza rol=comercial y su propia zona
     setFormData({
       email: "",
       nombre: "",
-      rol: "comercial",
+      rol: rolForzado || "comercial",
       zona_id: esJefeZona && perfil?.zona_id ? perfil.zona_id : "",
       jefe_id: esJefeZona && perfil?.id ? perfil.id : "",
       telefono: "",

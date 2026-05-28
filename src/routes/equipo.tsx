@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Users, Trophy, TrendingUp, Shield } from "lucide-react";
+import { Users, Trophy, TrendingUp, Shield, UserPlus, Plus } from "lucide-react";
 import { PageShell } from "@/components/app/page-shell";
 import { Card, KpiCard, MoneyEUR, SectionHeader } from "@/components/app/ui-bits";
 import { supabase } from "@/lib/supabase";
@@ -94,6 +94,23 @@ function EquipoPage() {
     <PageShell
       title={esRoot ? "Equipo comercial global" : "Mi equipo de zona"}
       subtitle={esRoot ? "Todos los comerciales activos" : "Comerciales asignados a tu zona"}
+      action={
+        <div className="flex items-center gap-2">
+          <Link
+            to="/clientes"
+            className="text-[12px] font-medium py-1.5 px-3 rounded-md ring-1 ring-border hover:bg-secondary flex items-center gap-1.5 cursor-pointer"
+          >
+            <Users className="size-3.5" /> Ver clientes
+          </Link>
+          <Link
+            to="/configuracion/usuarios"
+            search={{ nuevo: "comercial" }}
+            className="text-[12px] font-medium py-1.5 px-3 rounded-md bg-brand text-brand-foreground hover:brightness-110 flex items-center gap-1.5 cursor-pointer"
+          >
+            <UserPlus className="size-3.5" /> Añadir comercial
+          </Link>
+        </div>
+      }
     >
       <div className="grid grid-cols-4 gap-3 mb-6">
         <KpiCard label="Comerciales" value={String(data.totalComerciales)} hint="activos" />
