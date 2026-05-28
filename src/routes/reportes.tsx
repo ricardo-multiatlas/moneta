@@ -1,6 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Outlet, useRouterState, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { Download, FileBarChart, Users, AlertTriangle, MessageSquare, Building2 } from "lucide-react";
+import { Download, FileBarChart, Users, AlertTriangle, MessageSquare, Building2, Wand2 } from "lucide-react";
 import { PageShell } from "@/components/app/page-shell";
 import { Card, SectionHeader } from "@/components/app/ui-bits";
 import { supabase } from "@/lib/supabase";
@@ -18,6 +18,13 @@ function ReportesPage() {
   const { toast } = useDialog();
   const [busy, setBusy] = useState<string | null>(null);
   const [mes, setMes] = useState<string>(new Date().toISOString().slice(0, 7));
+
+  // reportes.tsx es layout padre de reportes.constructor.tsx.
+  // Si la URL es /reportes exacta → mostramos los reportes predefinidos.
+  // Si es /reportes/constructor (u otra sub-ruta) → <Outlet/> renderiza la sub-ruta.
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const isSubroute = pathname !== "/reportes" && pathname.startsWith("/reportes/");
+  if (isSubroute) return <Outlet />;
 
   if (!loading && !esRoot && !esJefeZona) {
     return (
@@ -255,8 +262,16 @@ function ReportesPage() {
     <PageShell
       title="Reportes"
       subtitle="Genera reportes Excel de ventas, vencimientos, documentación y rankings."
+      action={
+        <Link
+          to="/reportes/constructor"
+          className="text-[12px] font-medium py-1.5 px-3 rounded-md bg-foreground text-background hover:brightness-110 flex items-center gap-1.5 cursor-pointer"
+        >
+          <Wand2 className="size-3.5" /> Constructor de reportes
+        </Link>
+      }
     >
-      <SectionHeader title="Reportes disponibles" hint="Cada uno exporta a .xlsx" />
+      <SectionHeader title="Reportes predefinidos" hint="Listos para usar. Cada uno exporta a .xlsx." />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {reportes.map((r) => (
           <Card key={r.key} className="p-5 flex flex-col gap-3">

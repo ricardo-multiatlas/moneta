@@ -161,10 +161,15 @@ function LiquidacionesPage() {
       </div>
 
       <Card>
-        <SectionHeader title="Liquidaciones registradas" />
+        <div className="px-4 pt-4">
+          <SectionHeader
+            title={liquidaciones.length === 0 ? "Liquidaciones de comisiones" : `${liquidaciones.length} liquidaci${liquidaciones.length === 1 ? "ón" : "ones"} registrada${liquidaciones.length === 1 ? "" : "s"}`}
+            hint={liquidaciones.length === 0 ? `Aún no hay ninguna. Pulsa "Generar liquidaciones de ${periodo}" arriba para crearlas.` : "Cada fila representa la nómina de un comercial en el periodo indicado"}
+          />
+        </div>
         {liquidaciones.length === 0 ? (
           <div className="p-8 text-center text-[12px] text-ink-subtle">
-            Sin liquidaciones. Pulsa "Generar liquidaciones de {periodo}" para crear las del mes actual.
+            No hay liquidaciones registradas todavía.
           </div>
         ) : (
           <table className="w-full text-left border-collapse">

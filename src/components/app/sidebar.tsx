@@ -60,7 +60,6 @@ const nav: NavItem[] = [
   { to: "/liquidaciones", label: "Liquidaciones", icon: Banknote, allow: ["root", "admin"] },
   { to: "/firmas", label: "Firmas", icon: PenLine, allow: ["root", "admin", "jefe_zona", "comercial"] },
   { to: "/reportes", label: "Reportes", icon: FileBarChart, allow: ["root", "admin", "jefe_zona"] },
-  { to: "/reportes/constructor", label: "Constructor reportes", icon: Wand2, allow: ["root", "admin", "jefe_zona"] },
   { to: "/aprobaciones", label: "Aprobaciones", icon: CheckCheck, allow: ["root", "admin", "jefe_zona", "secretaria"] },
 ];
 
