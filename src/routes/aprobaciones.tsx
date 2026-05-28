@@ -272,18 +272,14 @@ function AprobacionesPage() {
                       <RowActions
                         actions={[
                           { icon: "view", label: "Ver detalle", onClick: () => setVerOpen(a) },
-                          { icon: "edit", label: "Aprobar", onClick: () => aprobar(a), tone: "brand" },
-                          { icon: "print", label: "Imprimir", onClick: () => {}, disabled: true },
-                          { icon: "download", label: "Rechazar", onClick: () => rechazar(a), tone: "danger" },
+                          { icon: "check", label: "Aprobar", onClick: () => aprobar(a), tone: "brand" },
+                          { icon: "x", label: "Rechazar", onClick: () => rechazar(a), tone: "danger" },
                         ]}
                       />
                     ) : (
                       <RowActions
                         actions={[
                           { icon: "view", label: "Ver detalle", onClick: () => setVerOpen(a) },
-                          { icon: "edit", label: "Editar", onClick: () => {}, disabled: true },
-                          { icon: "print", label: "Imprimir", onClick: () => {}, disabled: true },
-                          { icon: "download", label: "Descargar", onClick: () => {}, disabled: true },
                         ]}
                       />
                     )}

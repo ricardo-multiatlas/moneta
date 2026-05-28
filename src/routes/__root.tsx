@@ -12,6 +12,7 @@ import appCss from "../styles.css?url";
 import { AuthProvider } from "@/hooks/use-auth";
 import { PermissionsProvider } from "@/hooks/use-permissions";
 import { DialogProvider } from "@/components/app/dialog-provider";
+import { PwaRegister } from "@/components/app/pwa-register";
 
 function NotFoundComponent() {
   return (
@@ -82,12 +83,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:description", content: "El sistema interno que merece una correduría moderna en 2026." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
+      { name: "theme-color", content: "#0f172a" },
+      { name: "apple-mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-status-bar-style", content: "default" },
+      { name: "apple-mobile-web-app-title", content: "Moneta OS" },
+      { name: "mobile-web-app-capable", content: "yes" },
     ],
     links: [
-      {
-        rel: "stylesheet",
-        href: appCss,
-      },
+      { rel: "stylesheet", href: appCss },
+      { rel: "icon", href: "/moneta-logo.png" },
     ],
   }),
   shellComponent: RootShell,
@@ -119,6 +123,7 @@ function RootComponent() {
         <PermissionsProvider>
           <DialogProvider>
             <Outlet />
+            <PwaRegister />
           </DialogProvider>
         </PermissionsProvider>
       </AuthProvider>

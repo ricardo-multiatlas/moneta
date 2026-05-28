@@ -16,6 +16,7 @@ import { Route as ReportesRouteImport } from './routes/reportes'
 import { Route as PresupuestosRouteImport } from './routes/presupuestos'
 import { Route as PolizasRouteImport } from './routes/polizas'
 import { Route as MiPanelRouteImport } from './routes/mi-panel'
+import { Route as MiDashboardRouteImport } from './routes/mi-dashboard'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as LiquidacionesRouteImport } from './routes/liquidaciones'
 import { Route as FirmasRouteImport } from './routes/firmas'
@@ -31,6 +32,7 @@ import { Route as AprobacionesRouteImport } from './routes/aprobaciones'
 import { Route as AnalisisRouteImport } from './routes/analisis'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as VencimientosCalendarioRouteImport } from './routes/vencimientos.calendario'
+import { Route as ReportesConstructorRouteImport } from './routes/reportes.constructor'
 import { Route as PolizasIdRouteImport } from './routes/polizas.$id'
 import { Route as MiPanelDisponibilidadRouteImport } from './routes/mi-panel.disponibilidad'
 import { Route as ConfiguracionZonasRouteImport } from './routes/configuracion.zonas'
@@ -77,6 +79,11 @@ const PolizasRoute = PolizasRouteImport.update({
 const MiPanelRoute = MiPanelRouteImport.update({
   id: '/mi-panel',
   path: '/mi-panel',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MiDashboardRoute = MiDashboardRouteImport.update({
+  id: '/mi-dashboard',
+  path: '/mi-dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -153,6 +160,11 @@ const VencimientosCalendarioRoute = VencimientosCalendarioRouteImport.update({
   id: '/calendario',
   path: '/calendario',
   getParentRoute: () => VencimientosRoute,
+} as any)
+const ReportesConstructorRoute = ReportesConstructorRouteImport.update({
+  id: '/constructor',
+  path: '/constructor',
+  getParentRoute: () => ReportesRoute,
 } as any)
 const PolizasIdRoute = PolizasIdRouteImport.update({
   id: '/$id',
@@ -232,10 +244,11 @@ export interface FileRoutesByFullPath {
   '/firmas': typeof FirmasRoute
   '/liquidaciones': typeof LiquidacionesRoute
   '/login': typeof LoginRoute
+  '/mi-dashboard': typeof MiDashboardRoute
   '/mi-panel': typeof MiPanelRouteWithChildren
   '/polizas': typeof PolizasRouteWithChildren
   '/presupuestos': typeof PresupuestosRoute
-  '/reportes': typeof ReportesRoute
+  '/reportes': typeof ReportesRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tarificador': typeof TarificadorRoute
   '/vencimientos': typeof VencimientosRouteWithChildren
@@ -251,6 +264,7 @@ export interface FileRoutesByFullPath {
   '/configuracion/zonas': typeof ConfiguracionZonasRoute
   '/mi-panel/disponibilidad': typeof MiPanelDisponibilidadRoute
   '/polizas/$id': typeof PolizasIdRoute
+  '/reportes/constructor': typeof ReportesConstructorRoute
   '/vencimientos/calendario': typeof VencimientosCalendarioRoute
 }
 export interface FileRoutesByTo {
@@ -268,10 +282,11 @@ export interface FileRoutesByTo {
   '/firmas': typeof FirmasRoute
   '/liquidaciones': typeof LiquidacionesRoute
   '/login': typeof LoginRoute
+  '/mi-dashboard': typeof MiDashboardRoute
   '/mi-panel': typeof MiPanelRouteWithChildren
   '/polizas': typeof PolizasRouteWithChildren
   '/presupuestos': typeof PresupuestosRoute
-  '/reportes': typeof ReportesRoute
+  '/reportes': typeof ReportesRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tarificador': typeof TarificadorRoute
   '/vencimientos': typeof VencimientosRouteWithChildren
@@ -287,6 +302,7 @@ export interface FileRoutesByTo {
   '/configuracion/zonas': typeof ConfiguracionZonasRoute
   '/mi-panel/disponibilidad': typeof MiPanelDisponibilidadRoute
   '/polizas/$id': typeof PolizasIdRoute
+  '/reportes/constructor': typeof ReportesConstructorRoute
   '/vencimientos/calendario': typeof VencimientosCalendarioRoute
 }
 export interface FileRoutesById {
@@ -305,10 +321,11 @@ export interface FileRoutesById {
   '/firmas': typeof FirmasRoute
   '/liquidaciones': typeof LiquidacionesRoute
   '/login': typeof LoginRoute
+  '/mi-dashboard': typeof MiDashboardRoute
   '/mi-panel': typeof MiPanelRouteWithChildren
   '/polizas': typeof PolizasRouteWithChildren
   '/presupuestos': typeof PresupuestosRoute
-  '/reportes': typeof ReportesRoute
+  '/reportes': typeof ReportesRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tarificador': typeof TarificadorRoute
   '/vencimientos': typeof VencimientosRouteWithChildren
@@ -324,6 +341,7 @@ export interface FileRoutesById {
   '/configuracion/zonas': typeof ConfiguracionZonasRoute
   '/mi-panel/disponibilidad': typeof MiPanelDisponibilidadRoute
   '/polizas/$id': typeof PolizasIdRoute
+  '/reportes/constructor': typeof ReportesConstructorRoute
   '/vencimientos/calendario': typeof VencimientosCalendarioRoute
 }
 export interface FileRouteTypes {
@@ -343,6 +361,7 @@ export interface FileRouteTypes {
     | '/firmas'
     | '/liquidaciones'
     | '/login'
+    | '/mi-dashboard'
     | '/mi-panel'
     | '/polizas'
     | '/presupuestos'
@@ -362,6 +381,7 @@ export interface FileRouteTypes {
     | '/configuracion/zonas'
     | '/mi-panel/disponibilidad'
     | '/polizas/$id'
+    | '/reportes/constructor'
     | '/vencimientos/calendario'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -379,6 +399,7 @@ export interface FileRouteTypes {
     | '/firmas'
     | '/liquidaciones'
     | '/login'
+    | '/mi-dashboard'
     | '/mi-panel'
     | '/polizas'
     | '/presupuestos'
@@ -398,6 +419,7 @@ export interface FileRouteTypes {
     | '/configuracion/zonas'
     | '/mi-panel/disponibilidad'
     | '/polizas/$id'
+    | '/reportes/constructor'
     | '/vencimientos/calendario'
   id:
     | '__root__'
@@ -415,6 +437,7 @@ export interface FileRouteTypes {
     | '/firmas'
     | '/liquidaciones'
     | '/login'
+    | '/mi-dashboard'
     | '/mi-panel'
     | '/polizas'
     | '/presupuestos'
@@ -434,6 +457,7 @@ export interface FileRouteTypes {
     | '/configuracion/zonas'
     | '/mi-panel/disponibilidad'
     | '/polizas/$id'
+    | '/reportes/constructor'
     | '/vencimientos/calendario'
   fileRoutesById: FileRoutesById
 }
@@ -452,10 +476,11 @@ export interface RootRouteChildren {
   FirmasRoute: typeof FirmasRoute
   LiquidacionesRoute: typeof LiquidacionesRoute
   LoginRoute: typeof LoginRoute
+  MiDashboardRoute: typeof MiDashboardRoute
   MiPanelRoute: typeof MiPanelRouteWithChildren
   PolizasRoute: typeof PolizasRouteWithChildren
   PresupuestosRoute: typeof PresupuestosRoute
-  ReportesRoute: typeof ReportesRoute
+  ReportesRoute: typeof ReportesRouteWithChildren
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TarificadorRoute: typeof TarificadorRoute
   VencimientosRoute: typeof VencimientosRouteWithChildren
@@ -510,6 +535,13 @@ declare module '@tanstack/react-router' {
       path: '/mi-panel'
       fullPath: '/mi-panel'
       preLoaderRoute: typeof MiPanelRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mi-dashboard': {
+      id: '/mi-dashboard'
+      path: '/mi-dashboard'
+      fullPath: '/mi-dashboard'
+      preLoaderRoute: typeof MiDashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -616,6 +648,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/vencimientos/calendario'
       preLoaderRoute: typeof VencimientosCalendarioRouteImport
       parentRoute: typeof VencimientosRoute
+    }
+    '/reportes/constructor': {
+      id: '/reportes/constructor'
+      path: '/constructor'
+      fullPath: '/reportes/constructor'
+      preLoaderRoute: typeof ReportesConstructorRouteImport
+      parentRoute: typeof ReportesRoute
     }
     '/polizas/$id': {
       id: '/polizas/$id'
@@ -766,6 +805,18 @@ const PolizasRouteChildren: PolizasRouteChildren = {
 const PolizasRouteWithChildren =
   PolizasRoute._addFileChildren(PolizasRouteChildren)
 
+interface ReportesRouteChildren {
+  ReportesConstructorRoute: typeof ReportesConstructorRoute
+}
+
+const ReportesRouteChildren: ReportesRouteChildren = {
+  ReportesConstructorRoute: ReportesConstructorRoute,
+}
+
+const ReportesRouteWithChildren = ReportesRoute._addFileChildren(
+  ReportesRouteChildren,
+)
+
 interface VencimientosRouteChildren {
   VencimientosCalendarioRoute: typeof VencimientosCalendarioRoute
 }
@@ -793,10 +844,11 @@ const rootRouteChildren: RootRouteChildren = {
   FirmasRoute: FirmasRoute,
   LiquidacionesRoute: LiquidacionesRoute,
   LoginRoute: LoginRoute,
+  MiDashboardRoute: MiDashboardRoute,
   MiPanelRoute: MiPanelRouteWithChildren,
   PolizasRoute: PolizasRouteWithChildren,
   PresupuestosRoute: PresupuestosRoute,
-  ReportesRoute: ReportesRoute,
+  ReportesRoute: ReportesRouteWithChildren,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TarificadorRoute: TarificadorRoute,
   VencimientosRoute: VencimientosRouteWithChildren,

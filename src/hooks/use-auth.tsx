@@ -29,17 +29,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (!mounted) return;
       setUser(data.session?.user ?? null);
       setLoading(false);
-      if (data.session?.user) {
-        // fire and forget — defensivo (no rompe si la RPC no existe)
-        void setupAuditContext();
-      }
+      if (data.session?.user) void setupAuditContext();
     });
 
     const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
-      if (session?.user) {
-        void setupAuditContext();
-      }
+      if (session?.user) void setupAuditContext();
     });
 
     return () => {

@@ -20,6 +20,8 @@ import {
   PenLine,
   BarChart3,
   CheckCheck,
+  LayoutGrid,
+  Wand2,
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { usePermissions, type Rol } from "@/hooks/use-permissions";
@@ -36,6 +38,7 @@ type NavItem = {
 
 const nav: NavItem[] = [
   { to: "/", label: "Panel", icon: LayoutDashboard, exact: true },
+  { to: "/mi-dashboard", label: "Mi dashboard", icon: LayoutGrid },
   // Comerciales tienen su propio panel
   { to: "/mi-panel", label: "Mi panel", icon: User, allow: ["comercial"] },
   // Jefe de zona tiene su dashboard
@@ -57,6 +60,7 @@ const nav: NavItem[] = [
   { to: "/liquidaciones", label: "Liquidaciones", icon: Banknote, allow: ["root", "admin"] },
   { to: "/firmas", label: "Firmas", icon: PenLine, allow: ["root", "admin", "jefe_zona", "comercial"] },
   { to: "/reportes", label: "Reportes", icon: FileBarChart, allow: ["root", "admin", "jefe_zona"] },
+  { to: "/reportes/constructor", label: "Constructor reportes", icon: Wand2, allow: ["root", "admin", "jefe_zona"] },
   { to: "/aprobaciones", label: "Aprobaciones", icon: CheckCheck, allow: ["root", "admin", "jefe_zona", "secretaria"] },
 ];
 

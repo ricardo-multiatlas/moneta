@@ -1,8 +1,8 @@
-import { Eye, Pencil, Printer, Download } from "lucide-react";
+import { Eye, Pencil, Printer, Download, Check, X, Trash2 } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 
 interface RowAction {
-  icon: "view" | "edit" | "print" | "download";
+  icon: "view" | "edit" | "print" | "download" | "check" | "x" | "trash";
   label: string;
   /** Si se pasa `to`, se renderiza como Link de TanStack Router. */
   to?: string;
@@ -15,7 +15,7 @@ interface RowAction {
   tone?: "neutral" | "brand" | "danger";
 }
 
-const iconMap = { view: Eye, edit: Pencil, print: Printer, download: Download };
+const iconMap = { view: Eye, edit: Pencil, print: Printer, download: Download, check: Check, x: X, trash: Trash2 };
 
 export function RowActions({ actions }: { actions: RowAction[] }) {
   return (

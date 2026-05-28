@@ -22,13 +22,15 @@ export interface DetailModalProps {
 export function DetailModal({ isOpen, onClose, title, subtitle, rows, fullViewTo, fullViewParams }: DetailModalProps) {
   const navigate = useNavigate();
 
-  // Navegamos PRIMERO, después cerramos el modal. Si hacemos al revés
-  // React desmonta el Link en el mismo tick y la navegación se pierde.
-  const irAFicha = () => {
+  // Cerrar el modal ANTES (síncrono, libera el portal) y luego navegar.
+  // Si cerramos después, el modal se desmonta a medio camino y la
+  // transición de TanStack Router puede cancelarse.
+  const irAFicha = async () => {
     if (!fullViewTo) return;
-    navigate({ to: fullViewTo as any, params: fullViewParams as any });
-    // Cierra en el siguiente tick para no cancelar la navegación
-    setTimeout(() => onClose(), 0);
+    onClose();
+    // Esperar un microtick para que React procese el unmount del modal
+    await new Promise((r) => requestAnimationFrame(() => r(null)));
+    await navigate({ to: fullViewTo as any, params: fullViewParams as any });
   };
 
   return (

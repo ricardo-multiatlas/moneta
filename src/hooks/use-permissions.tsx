@@ -143,6 +143,29 @@ export function PermissionsProvider({ children }: { children: ReactNode }) {
       setLoadingPerfil(false);
       return;
     }
+    // Fallback inmediato por email para admins conocidos — el sidebar
+    // muestra el menú completo desde el primer instante. La query a BD
+    // refina los datos cuando responde.
+    const ROOT_EMAILS = new Set([
+      "rubentoledano@multiatlas.net",
+      "makeflowia@gmail.com",
+      "ricardomultiatlas@gmail.com",
+    ]);
+    if (user.email && ROOT_EMAILS.has(user.email.toLowerCase())) {
+      setPerfil({
+        id: user.id,
+        email: user.email,
+        nombre: (user.user_metadata as any)?.nombre || user.email.split("@")[0],
+        rol: "root",
+        zona_id: null,
+        jefe_id: null,
+        telefono: null,
+        foto_url: null,
+        iban_cifrado: null,
+        activo: true,
+      });
+    }
+
     let alive = true;
     setLoadingPerfil(true);
     Promise.all([
@@ -156,7 +179,7 @@ export function PermissionsProvider({ children }: { children: ReactNode }) {
         .select("rol, recurso, accion, permitido"),
     ]).then(([{ data: perfilData }, { data: permisos }]) => {
       if (!alive) return;
-      setPerfil((perfilData as PerfilUsuario) || null);
+      if (perfilData) setPerfil(perfilData as PerfilUsuario);
       setGranulares((permisos as PermisoGranular[]) || []);
       setLoadingPerfil(false);
     });

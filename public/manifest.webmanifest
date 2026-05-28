@@ -1,0 +1,33 @@
+{
+  "name": "Correduría OS · Moneta Seguros",
+  "short_name": "Moneta OS",
+  "description": "CRM + ERP con IA para corredurías de seguros. Pólizas, vencimientos, comisiones y facturación.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#ffffff",
+  "theme_color": "#0f172a",
+  "lang": "es-ES",
+  "categories": ["business", "productivity", "finance"],
+  "icons": [
+    {
+      "src": "/moneta-logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/moneta-logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    { "name": "Pólizas", "url": "/polizas", "description": "Listado de pólizas activas" },
+    { "name": "Vencimientos", "url": "/vencimientos", "description": "Vencimientos próximos" },
+    { "name": "Clientes", "url": "/clientes", "description": "Cartera de clientes" },
+    { "name": "Comisiones", "url": "/comisiones", "description": "Comisiones y liquidaciones" }
+  ]
+}

@@ -1,9 +1,9 @@
 // Edge Function: audit-with-ip
 //
-// Wrapper que captura cf-connecting-ip + user-agent del request HTTP,
-// los setea en variables de sesión Postgres (set_audit_context) y EN LA
-// MISMA TRANSACCIÓN ejecuta la mutación. Así el trigger fn_audit_trigger
-// lee las variables y popula audit_logs.ip y audit_logs.user_agent.
+// Wrapper que captura cf-connecting-ip + user-agent del request HTTP y
+// llama a la RPC audit_perform en una sola transacción Postgres.
+// La RPC hace set_config(...) + mutación en la misma tx → el trigger
+// fn_audit_trigger lee las variables y popula audit_logs.ip + user_agent.
 //
 // Payload:
 // {
@@ -11,12 +11,11 @@
 //   "table": "clientes",
 //   "row": { ... },                    // para insert / update
 //   "match": { "id": "uuid" },         // para update / delete
-//   "actor_token": "supabase access token del usuario"  // opcional, para hacer la mutación con su JWT
+//   "actor_token": "supabase access token del usuario"  // opcional
 // }
 //
 // Despliegue:
 //   supabase functions deploy audit-with-ip --no-verify-jwt
-//   (no requiere secrets adicionales: usa SUPABASE_SERVICE_ROLE_KEY ya configurado)
 
 // @ts-expect-error - Deno runtime
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
@@ -44,7 +43,6 @@ interface Payload {
 
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
-
   if (req.method !== "POST") {
     return new Response("Method not allowed", { status: 405, headers: corsHeaders });
   }
@@ -55,15 +53,13 @@ serve(async (req) => {
       return jsonResp(400, { error: "action y table son requeridos" });
     }
 
-    // Capturar IP del request (Cloudflare lo añade automáticamente)
     const ip = req.headers.get("cf-connecting-ip")
             || req.headers.get("x-forwarded-for")?.split(",")[0]?.trim()
             || req.headers.get("x-real-ip")
             || "";
     const ua = req.headers.get("user-agent") || "";
 
-    // Cliente Supabase: si el caller envió un token de usuario, usarlo (para que auth.uid funcione)
-    // Si no, usar service_role.
+    // Usar token del usuario si lo envía, sino service_role.
     const authHeader = req.headers.get("authorization");
     const userToken = payload.actor_token
                    || (authHeader?.startsWith("Bearer ") ? authHeader.slice(7) : null);
@@ -77,49 +73,23 @@ serve(async (req) => {
           auth: { autoRefreshToken: false, persistSession: false },
         });
 
-    // 1. Setear contexto de auditoría (IP + UA)
-    const { error: errCtx } = await sb.rpc("set_audit_context", {
+    // Una sola RPC que hace set_config + mutación EN LA MISMA TRANSACCIÓN.
+    // Sin esto, set_config(..., true) muere antes del INSERT/UPDATE/DELETE
+    // y el trigger ve las variables vacías → audit_logs.ip queda NULL.
+    const { data, error } = await sb.rpc("audit_perform", {
+      p_action: payload.action,
+      p_table: payload.table,
+      p_row: payload.row ?? null,
+      p_match: payload.match ?? null,
       p_ip: ip,
-      p_user_agent: ua,
+      p_ua: ua,
     });
-    if (errCtx) {
-      return jsonResp(500, { error: "set_audit_context falló: " + errCtx.message });
-    }
 
-    // 2. Ejecutar la mutación
-    let res;
-    switch (payload.action) {
-      case "insert":
-        if (!payload.row) return jsonResp(400, { error: "row requerido para insert" });
-        res = await sb.from(payload.table).insert(payload.row).select();
-        break;
-      case "update":
-        if (!payload.row || !payload.match) {
-          return jsonResp(400, { error: "row y match requeridos para update" });
-        }
-        let q = sb.from(payload.table).update(payload.row);
-        for (const [k, v] of Object.entries(payload.match)) {
-          q = q.eq(k, v as any);
-        }
-        res = await q.select();
-        break;
-      case "delete":
-        if (!payload.match) return jsonResp(400, { error: "match requerido para delete" });
-        let q2 = sb.from(payload.table).delete();
-        for (const [k, v] of Object.entries(payload.match)) {
-          q2 = q2.eq(k, v as any);
-        }
-        res = await q2;
-        break;
-      default:
-        return jsonResp(400, { error: "action inválido: " + payload.action });
-    }
-
-    if (res.error) return jsonResp(500, { error: res.error.message });
+    if (error) return jsonResp(500, { error: "audit_perform falló: " + error.message });
 
     return jsonResp(200, {
       success: true,
-      data: res.data,
+      data,
       audit: { ip, ua },
     });
   } catch (e) {

@@ -5,6 +5,40 @@ Stack: TanStack Start + Vite, Supabase (Postgres + Auth + Storage + Edge Functio
 
 ---
 
+## v0.9 — Dashboard customizable + Constructor de reportes (2026-05-28 noche)
+
+### Migración SQL (`APLICAR_EN_SQL_EDITOR_v6.sql` + `20260528230000_v09_dashboard_reportes.sql`)
+- RPC `audit_perform(action, table, row, match, ip, ua)`: hace `set_config` + mutación en una sola transacción atómica. Soluciona que `audit_logs.ip` quedaba `NULL` en deletes desde la UI (set_config con `is_local=true` muere antes del siguiente statement).
+- Tabla `dashboard_widgets` (user_id, widget_type, position, size, config, visible). RLS: cada usuario ve/edita lo suyo, root ve todo.
+- Tabla `reportes_personalizados` (entidad enum 10 valores, columnas TEXT[], filtros jsonb, orden jsonb, compartido). RLS: visible para el creador, los compartidos para todos, root ve todo.
+- Triggers updated_at + audit en ambas tablas.
+
+### Rutas nuevas (2)
+- **`/mi-dashboard`** — Dashboard customizable por usuario. Catálogo de 12 widgets (KPIs de pólizas/vencimientos/leads/clientes/comisiones, Top 10 clientes/comerciales, vencimientos críticos, últimos clientes, leads semana, ranking aseguradoras, accesos rápidos). Cada widget tiene tamaño S/M/L/XL configurable, posición arrastrable, visible/oculto. Persistencia automática en BD.
+- **`/reportes/constructor`** — Constructor visual de reportes. 10 entidades disponibles (pólizas, clientes, vencimientos, leads, comisiones, presupuestos, facturas, liquidaciones, siniestros, comunicaciones). Selector de columnas (checkboxes), constructor de filtros (campo + operador `=`/`!=`/`>`/`<`/`>=`/`<=`/`like`/`in`/`is null`/`not null` + valor), constructor de orden, guardar plantilla, ejecutar exportando a Excel. Marcar como "Compartido" para que lo vean todos.
+
+### Edge Function `audit-with-ip` migrada
+- Ahora llama a la RPC `audit_perform` directamente (una sola transacción) en lugar de `set_audit_context` + mutación separadas. Resultado: `audit_logs.ip` y `audit_logs.user_agent` ya se llenan en todos los deletes/updates desde UI.
+
+### Router con feedback de navegación
+- `defaultPendingComponent` global que muestra spinner si una navegación tarda más de 400ms. Antes los Links de rutas con loaders lentos parecían "no responder" hasta que la query terminaba (~5-10s en peor caso). Ahora hay feedback visual inmediato sin flash en navegaciones rápidas.
+
+### Cliente Supabase con fetch timeout
+- `src/lib/supabase.ts` envuelve fetch con `AbortController` de 15s. Sin esto, una query lenta dejaba el route loader pendiente para siempre y la UI no respondía a clicks.
+
+### Fallback de rol por email
+- `usePermissions` detecta emails admin conocidos (`rubentoledano@multiatlas.net`, `makeflowia@gmail.com`, `ricardomultiatlas@gmail.com`) y asume `rol=root` instantáneamente sin esperar BD. Garantiza sidebar completo aunque la query a `usuarios` tarde o falle.
+
+### UX fixes
+- Quitada campana decorativa del topbar (sin función).
+- Iconos correctos en `/aprobaciones`: ✓ (check) para Aprobar, ✗ (X) para Rechazar. Antes eran lápiz + flecha download sin sentido semántico.
+- Botón "Abrir ficha completa" del DetailModal cierra el modal primero, luego navega (evita cancelación de transición).
+- Lápiz editar de pólizas usa `router.navigate` imperativo en lugar de Link (más robusto).
+- Sin botones duplicados de "Añadir widget" en `/mi-dashboard` cuando está vacío.
+- Padding correcto en SectionHeader de `/equipo` (antes pegado al borde).
+
+---
+
 ## v0.8 — Cierre total de la matriz Diego (2026-05-28)
 
 ### Migración SQL (`20260528220000_v08_cierre_total.sql`)

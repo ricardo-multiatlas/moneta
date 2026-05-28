@@ -1,4 +1,4 @@
-import { Sparkles, Plus, Bell, Search, Loader2, X } from "lucide-react";
+import { Sparkles, Plus, Search, Loader2, X } from "lucide-react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { naturalSearchFn } from "@/lib/ai-search";
@@ -131,10 +131,6 @@ export function Topbar({ title, subtitle, action }: TopbarProps) {
         </form>
 
         <div className="flex items-center gap-2">
-          <button type="button" className="size-8 grid place-items-center rounded-md hover:bg-secondary transition-colors relative" aria-label="Notificaciones">
-            <Bell className="size-4 text-ink-muted" strokeWidth={2} />
-            <span className="absolute top-1.5 right-1.5 size-1.5 rounded-full bg-danger" />
-          </button>
           <Link
             to="/polizas"
             search={{ nueva: "manual" }}

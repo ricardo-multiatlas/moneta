@@ -103,7 +103,9 @@ function EquipoPage() {
       </div>
 
       <Card>
-        <SectionHeader title="Ranking de comerciales" hint="por prima anual de su cartera" />
+        <div className="px-4 pt-4">
+          <SectionHeader title="Ranking de comerciales" hint="por prima anual de su cartera" />
+        </div>
         {data.ranking.length === 0 ? (
           <div className="p-8 text-center text-[12px] text-ink-subtle">
             {esJefeZona ? "Sin comerciales en tu zona aún." : "Sin comerciales activos en el sistema."}
