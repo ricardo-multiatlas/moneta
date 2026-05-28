@@ -1,20 +1,34 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { Filter, Download, Plus } from "lucide-react";
 import { useMemo, useState } from "react";
+import { z } from "zod";
 import { PageShell } from "@/components/app/page-shell";
 import { Card, MoneyEUR, StatusBadge, Modal } from "@/components/app/ui-bits";
 import { RowActions } from "@/components/app/row-actions";
 import { DetailModal } from "@/components/app/detail-modal";
+import { Paginador } from "@/components/app/paginador";
 import { supabase } from "@/lib/supabase";
 import { exportarExcel } from "@/lib/exportar";
 import { generarFichaPDF, descargarBlob, imprimirBlob } from "@/lib/generic-pdf";
 import { useDialog } from "@/components/app/dialog-provider";
 
+const searchSchema = z.object({
+  page: z.coerce.number().int().positive().default(1).catch(1),
+  pageSize: z.coerce.number().int().positive().default(50).catch(50),
+  q: z.string().optional().catch(undefined),
+  tipo: z.enum(["", "particular", "empresa"]).default("").catch(""),
+});
+
 export const Route = createFileRoute("/clientes")({
   component: ClientesPage,
   head: () => ({ meta: [{ title: "Clientes · Correduría OS" }] }),
-  loader: async () => {
-    const { data: clientes, error } = await supabase
+  validateSearch: searchSchema,
+  loaderDeps: ({ search }) => ({ page: search.page, pageSize: search.pageSize, q: search.q, tipo: search.tipo }),
+  loader: async ({ deps: { page, pageSize, q, tipo } }) => {
+    const from = (page - 1) * pageSize;
+    const to = from + pageSize - 1;
+
+    let query = supabase
       .from("clientes")
       .select(`
         id,
@@ -28,12 +42,23 @@ export const Route = createFileRoute("/clientes")({
         created_at,
         comercial:usuarios!clientes_comercial_asignado_id_fkey(nombre),
         polizas(id, prima_anual, estado)
-      `)
-      .order("created_at", { ascending: false });
+      `, { count: "exact" })
+      .order("created_at", { ascending: false })
+      .range(from, to);
+
+    if (q && q.trim()) {
+      const term = q.trim();
+      query = query.or(`nombre_razon_social.ilike.%${term}%,nif_cif.ilike.%${term}%,email.ilike.%${term}%`);
+    }
+    if (tipo) {
+      query = query.eq("tipo", tipo);
+    }
+
+    const { data: clientes, error, count } = await query;
 
     if (error) {
       console.error("Error cargando clientes:", error);
-      return { clientes: [] };
+      return { clientes: [], total: 0 };
     }
 
     const adaptedClientes = (clientes || []).map((c: any) => {
@@ -54,7 +79,7 @@ export const Route = createFileRoute("/clientes")({
       };
     });
 
-    return { clientes: adaptedClientes };
+    return { clientes: adaptedClientes, total: count || 0 };
   },
 });
 
@@ -69,16 +94,30 @@ interface FormCliente {
 const emptyForm: FormCliente = { nombre_razon_social: "", nif_cif: "", email: "", telefono: "", tipo: "particular" };
 
 function ClientesPage() {
-  const { clientes } = Route.useLoaderData();
+  const { clientes, total } = Route.useLoaderData();
+  const { page, pageSize, q: qFromUrl, tipo: tipoFromUrl } = Route.useSearch();
   const router = useRouter();
   const { toast } = useDialog();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
   const [viewing, setViewing] = useState<any | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [search, setSearch] = useState("");
-  const [tipoFiltro, setTipoFiltro] = useState<string>("");
+  const [search, setSearch] = useState(qFromUrl || "");
+  const [tipoFiltro, setTipoFiltro] = useState<string>(tipoFromUrl || "");
   const [formData, setFormData] = useState<FormCliente>(emptyForm);
+
+  // Actualiza search params del router cuando el usuario cambia búsqueda / tipo / paginación
+  const updateSearch = (patch: Record<string, any>) => {
+    router.navigate({
+      to: "/clientes",
+      search: (prev: any) => ({ ...prev, ...patch }),
+    });
+  };
+
+  // Aplica filtro al pulsar Enter (debounce manual con onBlur también)
+  const aplicarFiltro = () => {
+    updateSearch({ page: 1, q: search || undefined, tipo: tipoFiltro || undefined });
+  };
 
   const abrirNuevo = () => {
     setEditId(null);
@@ -123,19 +162,8 @@ function ClientesPage() {
     }
   };
 
-  const filtrados = useMemo(() => {
-    const q = search.trim().toLowerCase();
-    return clientes.filter((c: any) => {
-      if (tipoFiltro && c.tipo?.toLowerCase() !== tipoFiltro) return false;
-      if (!q) return true;
-      return (
-        c.nombre?.toLowerCase().includes(q) ||
-        c.nif?.toLowerCase().includes(q) ||
-        c.email?.toLowerCase().includes(q) ||
-        c.telefono?.toLowerCase().includes(q)
-      );
-    });
-  }, [clientes, search, tipoFiltro]);
+  // Ya filtrado en servidor — clientes viene paginado
+  const filtrados = clientes;
 
   const exportarXLSX = () => {
     if (filtrados.length === 0) {
@@ -203,7 +231,10 @@ function ClientesPage() {
             <select
               title="Filtrar por tipo de cliente"
               value={tipoFiltro}
-              onChange={(e) => setTipoFiltro(e.target.value)}
+              onChange={(e) => {
+                setTipoFiltro(e.target.value);
+                updateSearch({ page: 1, tipo: e.target.value || undefined });
+              }}
               className="text-[12px] font-medium bg-transparent border-0 outline-none cursor-pointer pr-1"
             >
               <option value="">Todos</option>
@@ -288,18 +319,20 @@ function ClientesPage() {
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Buscar por nombre, NIF, email…"
+            onKeyDown={(e) => { if (e.key === "Enter") aplicarFiltro(); }}
+            onBlur={aplicarFiltro}
+            placeholder="Buscar por nombre, NIF, email… (Enter para filtrar)"
             className="flex-1 bg-secondary border-0 rounded px-3 py-1.5 text-[12px] ring-1 ring-border focus:ring-brand/30 outline-none"
           />
-          <div className="flex items-center gap-1 text-[11px] text-ink-subtle">
-            <span>Mostrando {filtrados.length} de {clientes.length}</span>
+          <div className="text-[11px] text-ink-subtle whitespace-nowrap">
+            <span className="font-medium text-foreground">{total}</span> total
           </div>
         </div>
 
         {filtrados.length === 0 ? (
           <div className="p-8 text-center text-ink-subtle text-sm">
-            {clientes.length === 0
-              ? 'No hay clientes creados. Haz clic en "Nuevo cliente".'
+            {total === 0
+              ? 'No hay clientes. Haz clic en "Nuevo cliente".'
               : "Ningún cliente coincide con el filtro."}
           </div>
         ) : (
@@ -350,6 +383,15 @@ function ClientesPage() {
               })}
             </tbody>
           </table>
+        )}
+        {total > 0 && (
+          <Paginador
+            page={page}
+            pageSize={pageSize}
+            total={total}
+            onChange={(p) => updateSearch({ page: p })}
+            onPageSizeChange={(s) => updateSearch({ pageSize: s, page: 1 })}
+          />
         )}
       </Card>
 

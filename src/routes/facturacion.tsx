@@ -1,5 +1,6 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { Plus, FileDown } from "lucide-react";
+import { z } from "zod";
 import { PageShell } from "@/components/app/page-shell";
 import { Card, KpiCard, MoneyEUR, SectionHeader, StatusBadge, Modal } from "@/components/app/ui-bits";
 import { supabase } from "@/lib/supabase";
@@ -7,31 +8,41 @@ import { exportarExcel } from "@/lib/exportar";
 import { generarFichaPDF, descargarBlob, imprimirBlob } from "@/lib/generic-pdf";
 import { RowActions } from "@/components/app/row-actions";
 import { DetailModal } from "@/components/app/detail-modal";
+import { Paginador } from "@/components/app/paginador";
 import { useDialog } from "@/components/app/dialog-provider";
 import { useState } from "react";
+
+const searchSchema = z.object({
+  page: z.coerce.number().int().positive().default(1).catch(1),
+  pageSize: z.coerce.number().int().positive().default(50).catch(50),
+});
 
 export const Route = createFileRoute("/facturacion")({
   component: FacturacionPage,
   head: () => ({ meta: [{ title: "Facturación · Correduría OS" }] }),
-  loader: async () => {
-    // Fetch actual facturas
-    const { data: facturasRaw, error } = await supabase
+  validateSearch: searchSchema,
+  loaderDeps: ({ search }) => ({ page: search.page, pageSize: search.pageSize }),
+  loader: async ({ deps: { page, pageSize } }) => {
+    const from = (page - 1) * pageSize;
+    const to = from + pageSize - 1;
+    const { data: facturasRaw, error, count } = await supabase
       .from("facturas")
       .select(`
-        id, 
-        numero_factura, 
-        importe_total, 
+        id,
+        numero_factura,
+        importe_total,
         fecha_emision,
         fecha_vencimiento,
         estado,
         clientes(nombre_razon_social),
         polizas(numero_poliza)
-      `)
-      .order("created_at", { ascending: false });
+      `, { count: "exact" })
+      .order("created_at", { ascending: false })
+      .range(from, to);
 
     if (error) {
       console.error("Error fetching facturas:", error);
-      return { facturas: [] };
+      return { facturas: [], total: 0 };
     }
 
     const facturas = facturasRaw?.map((f: any) => ({
@@ -45,13 +56,17 @@ export const Route = createFileRoute("/facturacion")({
       estado: f.estado === "emitida" ? "Emitida" : f.estado === "pagada" ? "Pagada" : f.estado === "vencida" ? "Vencida" : "Anulada",
     })) || [];
 
-    return { facturas };
+    return { facturas, total: count || 0 };
   },
 });
 
 function FacturacionPage() {
-  const { facturas } = Route.useLoaderData();
+  const { facturas, total } = Route.useLoaderData();
+  const search = Route.useSearch();
   const router = useRouter();
+  const updateSearch = (patch: Record<string, any>) => {
+    router.navigate({ to: "/facturacion", search: (prev: any) => ({ ...prev, ...patch }) });
+  };
   const { toast } = useDialog();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -279,6 +294,15 @@ function FacturacionPage() {
               })}
             </tbody>
           </table>
+        )}
+        {total > 0 && (
+          <Paginador
+            page={search.page}
+            pageSize={search.pageSize}
+            total={total}
+            onChange={(p) => updateSearch({ page: p })}
+            onPageSizeChange={(s) => updateSearch({ pageSize: s, page: 1 })}
+          />
         )}
       </Card>
 

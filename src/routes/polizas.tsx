@@ -7,6 +7,7 @@ import { generarPolizaPDF, subirPolizaPDF } from "@/lib/polizas-pdf";
 import { descargarBlob, imprimirBlob } from "@/lib/generic-pdf";
 import { RowActions } from "@/components/app/row-actions";
 import { DetailModal } from "@/components/app/detail-modal";
+import { Paginador } from "@/components/app/paginador";
 import { useDialog } from "@/components/app/dialog-provider";
 import { createServerFn } from "@tanstack/react-start";
 import { generateObject } from "ai";
@@ -50,23 +51,37 @@ export const extractPolicyFn = createServerFn({ method: "POST" })
 
 const polizasSearchSchema = z.object({
   nueva: z.enum(["manual"]).optional(),
+  page: z.coerce.number().int().positive().default(1).catch(1),
+  pageSize: z.coerce.number().int().positive().default(50).catch(50),
+  q: z.string().optional().catch(undefined),
+  estado: z.enum(["", "activa", "cancelada", "renovacion"]).default("").catch(""),
 });
 
 export const Route = createFileRoute("/polizas")({
   component: PolizasPage,
   head: () => ({ meta: [{ title: "Pólizas · Correduría OS" }] }),
   validateSearch: polizasSearchSchema,
-  loader: async () => {
-    const { data: polizas, error } = await supabase
+  loaderDeps: ({ search }) => ({ page: search.page, pageSize: search.pageSize, q: search.q, estado: search.estado }),
+  loader: async ({ deps: { page, pageSize, q, estado } }) => {
+    const from = (page - 1) * pageSize;
+    const to = from + pageSize - 1;
+    let query = supabase
       .from("polizas")
       .select(`
         id, cliente_id, numero_poliza, ramo, aseguradora, prima_anual, comision_importe,
         fecha_inicio, fecha_vencimiento, estado, pdf_url,
         clientes(nombre_razon_social, nif_cif, email, telefono)
-      `)
-      .order("created_at", { ascending: false });
+      `, { count: "exact" })
+      .order("created_at", { ascending: false })
+      .range(from, to);
+    if (q && q.trim()) {
+      const term = q.trim();
+      query = query.or(`numero_poliza.ilike.%${term}%,aseguradora.ilike.%${term}%,ramo.ilike.%${term}%`);
+    }
+    if (estado) query = query.eq("estado", estado);
 
-    if (error) return { polizas: [] };
+    const { data: polizas, error, count } = await query;
+    if (error) return { polizas: [], total: 0 };
 
     const adaptedPolizas = polizas?.map((p: any) => ({
       id: p.id,
@@ -87,14 +102,17 @@ export const Route = createFileRoute("/polizas")({
       estado: p.estado === "activa" ? "Vigente" : p.estado === "cancelada" ? "Anulada" : "En renovación",
     })) || [];
 
-    return { polizas: adaptedPolizas };
+    return { polizas: adaptedPolizas, total: count || 0 };
   },
 });
 
 function PolizasPage() {
-  const { polizas } = Route.useLoaderData();
+  const { polizas, total } = Route.useLoaderData();
   const search = Route.useSearch();
   const router = useRouter();
+  const updateSearch = (patch: Record<string, any>) => {
+    router.navigate({ to: "/polizas", search: (prev: any) => ({ ...prev, ...patch }) });
+  };
   const { toast, confirm } = useDialog();
   const [isExtracting, setIsExtracting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -457,6 +475,15 @@ function PolizasPage() {
               })}
             </tbody>
           </table>
+        )}
+        {total > 0 && (
+          <Paginador
+            page={search.page}
+            pageSize={search.pageSize}
+            total={total}
+            onChange={(p) => updateSearch({ page: p })}
+            onPageSizeChange={(s) => updateSearch({ pageSize: s, page: 1 })}
+          />
         )}
       </Card>
 
