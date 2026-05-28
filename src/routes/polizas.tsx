@@ -446,7 +446,7 @@ function PolizasPage() {
                       <RowActions
                         actions={[
                           { icon: "view", label: "Ver datos", onClick: () => setViewing(p), tone: "brand" },
-                          { icon: "edit", label: "Editar (abrir ficha)", onClick: () => router.navigate({ to: "/polizas/$id", params: { id: p.id } }) },
+                          { icon: "edit", label: "Editar (abrir ficha)", onClick: () => { window.location.href = `/polizas/${p.id}`; } },
                           { icon: "print", label: "Imprimir póliza", onClick: () => imprimirPDF(p) },
                           { icon: "download", label: "Descargar PDF", onClick: () => descargarPDF(p) },
                         ]}

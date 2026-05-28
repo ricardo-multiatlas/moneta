@@ -128,38 +128,35 @@ function ConfiguracionPage() {
       subtitle="Estado del sistema, conexión a base de datos, utilidades y auditoría inmutable."
     >
       <div className="flex items-center gap-2 mb-5 flex-wrap">
-        <Link to="/configuracion/usuarios" className="text-[12px] font-medium py-1.5 px-3 rounded-md ring-1 ring-border hover:bg-secondary flex items-center gap-1.5 cursor-pointer">
+        <a href="/configuracion/usuarios" className="text-[12px] font-medium py-1.5 px-3 rounded-md ring-1 ring-border hover:bg-secondary flex items-center gap-1.5 cursor-pointer">
           <Users className="size-3.5" /> Usuarios y equipo
-        </Link>
-        <Link to="/configuracion/zonas" className="text-[12px] font-medium py-1.5 px-3 rounded-md ring-1 ring-border hover:bg-secondary flex items-center gap-1.5 cursor-pointer">
+        </a>
+        <a href="/configuracion/zonas" className="text-[12px] font-medium py-1.5 px-3 rounded-md ring-1 ring-border hover:bg-secondary flex items-center gap-1.5 cursor-pointer">
           <Building2 className="size-3.5" /> Zonas comerciales
-        </Link>
-        <Link to="/configuracion/permisos" className="text-[12px] font-medium py-1.5 px-3 rounded-md ring-1 ring-border hover:bg-secondary flex items-center gap-1.5 cursor-pointer">
+        </a>
+        <a href="/configuracion/permisos" className="text-[12px] font-medium py-1.5 px-3 rounded-md ring-1 ring-border hover:bg-secondary flex items-center gap-1.5 cursor-pointer">
           <Lock className="size-3.5" /> Permisos granulares
-        </Link>
-        <Link to="/configuracion/reglas-comision" className="text-[12px] font-medium py-1.5 px-3 rounded-md ring-1 ring-border hover:bg-secondary flex items-center gap-1.5 cursor-pointer">
+        </a>
+        <a href="/configuracion/reglas-comision" className="text-[12px] font-medium py-1.5 px-3 rounded-md ring-1 ring-border hover:bg-secondary flex items-center gap-1.5 cursor-pointer">
           <Sliders className="size-3.5" /> Reglas comisión
-        </Link>
-        <Link
-          to="/configuracion/backup"
-          className="text-[12px] font-medium py-1.5 px-3 rounded-md ring-1 ring-border hover:bg-secondary flex items-center gap-1.5 cursor-pointer"
-        >
+        </a>
+        <a href="/configuracion/backup" className="text-[12px] font-medium py-1.5 px-3 rounded-md ring-1 ring-border hover:bg-secondary flex items-center gap-1.5 cursor-pointer">
           <HardDrive className="size-3.5" /> Backups y restore
-        </Link>
+        </a>
         <RoleGate allow={["root", "admin", "jefe_zona"]}>
-          <Link to="/configuracion/alertas" className="text-[12px] font-medium py-1.5 px-3 rounded-md ring-1 ring-border hover:bg-secondary flex items-center gap-1.5 cursor-pointer">
+          <a href="/configuracion/alertas" className="text-[12px] font-medium py-1.5 px-3 rounded-md ring-1 ring-border hover:bg-secondary flex items-center gap-1.5 cursor-pointer">
             <BellRing className="size-3.5" /> Alertas vencimientos
-          </Link>
+          </a>
         </RoleGate>
         <RoleGate allow={["root", "admin"]}>
-          <Link to="/configuracion/integraciones" className="text-[12px] font-medium py-1.5 px-3 rounded-md ring-1 ring-border hover:bg-secondary flex items-center gap-1.5 cursor-pointer">
+          <a href="/configuracion/integraciones" className="text-[12px] font-medium py-1.5 px-3 rounded-md ring-1 ring-border hover:bg-secondary flex items-center gap-1.5 cursor-pointer">
             <Plug className="size-3.5" /> Integraciones aseguradoras
-          </Link>
+          </a>
         </RoleGate>
         <RoleGate allow={["root", "admin"]}>
-          <Link to="/configuracion/webhooks" className="text-[12px] font-medium py-1.5 px-3 rounded-md ring-1 ring-border hover:bg-secondary flex items-center gap-1.5 cursor-pointer">
+          <a href="/configuracion/webhooks" className="text-[12px] font-medium py-1.5 px-3 rounded-md ring-1 ring-border hover:bg-secondary flex items-center gap-1.5 cursor-pointer">
             <Webhook className="size-3.5" /> Webhooks
-          </Link>
+          </a>
         </RoleGate>
       </div>
 
