@@ -15,14 +15,46 @@ export const Route = createFileRoute("/configuracion/webhooks")({
   head: () => ({ meta: [{ title: "Webhooks · Correduría OS" }] }),
 });
 
+// id = nombre técnico que se persiste en BD y que reciben los webhooks
+// label = nombre legible que ven los usuarios en la UI
 const EVENTOS = [
-  { id: "*", label: "* (todos los eventos)" },
-  { id: "poliza.created", label: "poliza.created" },
-  { id: "poliza.deleted", label: "poliza.deleted" },
-  { id: "cliente.created", label: "cliente.created" },
-  { id: "vencimiento.proximo", label: "vencimiento.proximo" },
-  { id: "comision.aprobada", label: "comision.aprobada" },
+  { id: "*", label: "Todos los eventos" },
+  { id: "poliza.created", label: "Póliza creada" },
+  { id: "poliza.updated", label: "Póliza actualizada" },
+  { id: "poliza.deleted", label: "Póliza eliminada" },
+  { id: "poliza.renovada", label: "Póliza renovada" },
+  { id: "cliente.created", label: "Cliente creado" },
+  { id: "cliente.updated", label: "Cliente actualizado" },
+  { id: "cliente.deleted", label: "Cliente eliminado" },
+  { id: "vencimiento.proximo", label: "Vencimiento próximo" },
+  { id: "vencimiento.avisado", label: "Aviso de vencimiento enviado" },
+  { id: "presupuesto.enviado", label: "Presupuesto enviado" },
+  { id: "presupuesto.aceptado", label: "Presupuesto aceptado" },
+  { id: "comision.creada", label: "Comisión calculada" },
+  { id: "comision.aprobada", label: "Comisión aprobada" },
+  { id: "comision.rechazada", label: "Comisión rechazada" },
+  { id: "liquidacion.generada", label: "Liquidación generada" },
+  { id: "liquidacion.pagada", label: "Liquidación pagada" },
+  { id: "siniestro.declarado", label: "Siniestro declarado" },
+  { id: "factura.emitida", label: "Factura emitida" },
 ];
+
+// Helper: traduce el id técnico al label legible. Si no está en el catálogo,
+// devuelve el id original (defensivo para eventos custom).
+const eventoLabel = (id: string): string =>
+  EVENTOS.find((e) => e.id === id)?.label || id;
+
+// Etiquetas legibles para los tipos de evento que envía Resend al webhook
+// /functions/v1/webhook-resend. El id técnico se mantiene tal cual en BD.
+const RESEND_LABELS: Record<string, string> = {
+  "email.sent": "Email enviado",
+  "email.delivered": "Email entregado",
+  "email.opened": "Email abierto",
+  "email.clicked": "Click en enlace",
+  "email.bounced": "Email rebotado",
+  "email.complained": "Marcado como spam",
+  "email.delivery_delayed": "Entrega retrasada",
+};
 
 interface FormW {
   nombre: string;
@@ -263,7 +295,10 @@ function WebhooksPage() {
                   <td className="px-4 py-3 text-[11px] font-mono text-ink-muted truncate max-w-[280px]" title={w.url}>
                     {w.url}
                   </td>
-                  <td className="px-4 py-3 text-[11px] font-mono">{w.evento}</td>
+                  <td className="px-4 py-3 text-[12px]">
+                    <div>{eventoLabel(w.evento)}</div>
+                    <div className="text-[10px] font-mono text-ink-subtle">{w.evento}</div>
+                  </td>
                   <td className="px-4 py-3">
                     <StatusBadge tone={w.activo ? "success" : "neutral"}>{w.activo ? "Activo" : "Pausado"}</StatusBadge>
                   </td>
@@ -322,9 +357,12 @@ function WebhooksPage() {
               {eventosRecibidos.map((ev: any) => (
                 <tr key={ev.id} className="hover:bg-secondary/30 transition-colors">
                   <td className="px-4 py-3 text-[11px] font-mono text-ink-muted whitespace-nowrap">
-                    {new Date(ev.created_at).toLocaleString()}
+                    {new Date(ev.recibido_at || ev.created_at).toLocaleString()}
                   </td>
-                  <td className="px-4 py-3 text-[11.5px] font-mono">{ev.tipo}</td>
+                  <td className="px-4 py-3 text-[12px]">
+                    <div>{RESEND_LABELS[ev.tipo as keyof typeof RESEND_LABELS] || ev.tipo}</div>
+                    <div className="text-[10px] font-mono text-ink-subtle">{ev.tipo}</div>
+                  </td>
                   <td className="px-4 py-3 text-[11.5px] text-ink-muted">{ev.destinatario || "—"}</td>
                   <td className="px-4 py-3 text-[10.5px] font-mono text-ink-subtle truncate max-w-[180px]" title={ev.resend_id || ""}>
                     {ev.resend_id || "—"}
@@ -345,7 +383,7 @@ function WebhooksPage() {
           verOpen
             ? [
                 { label: "URL", value: verOpen.url },
-                { label: "Evento", value: verOpen.evento },
+                { label: "Evento", value: <><div>{eventoLabel(verOpen.evento)}</div><div className="text-[10px] font-mono text-ink-subtle mt-0.5">{verOpen.evento}</div></> },
                 { label: "Secret", value: verOpen.secret ? "•••••• configurado" : "Sin firmar" },
                 { label: "Activo", value: verOpen.activo ? "Sí" : "No" },
                 {
