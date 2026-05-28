@@ -1,4 +1,4 @@
-import { createFileRoute, useRouter, Link } from "@tanstack/react-router";
+import { createFileRoute, useRouter, Link, Outlet, useRouterState } from "@tanstack/react-router";
 import { Database, KeyRound, ShieldCheck, Trash2, RefreshCw, History, Plus, Pencil, X, Users, Building2, Lock, Sliders, HardDrive, BellRing, Plug, Webhook } from "lucide-react";
 import { useState } from "react";
 import { PageShell } from "@/components/app/page-shell";
@@ -57,6 +57,13 @@ function ConfiguracionPage() {
   const { toast, confirm } = useDialog();
   const [busy, setBusy] = useState<string | null>(null);
   const [tab, setTab] = useState<"sistema" | "auditoria">("sistema");
+
+  // configuracion.tsx es layout padre de configuracion.usuarios.tsx, .zonas, etc.
+  // Si la URL es exacta /configuracion → muestra el panel general (counts + auditoría).
+  // Si es sub-ruta (/configuracion/usuarios, etc.) → renderiza la sub-ruta via Outlet.
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const isSubroute = pathname !== "/configuracion" && pathname.startsWith("/configuracion/");
+  if (isSubroute) return <Outlet />;
 
   const purgarDemo = async () => {
     const ok = await confirm({ message: "¿Eliminar TODOS los datos de las tablas operativas? Esta acción no se puede deshacer.", tone: "danger" });
