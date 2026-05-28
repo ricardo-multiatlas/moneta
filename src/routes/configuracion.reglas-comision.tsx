@@ -12,19 +12,6 @@ import { usePermissions } from "@/hooks/use-permissions";
 export const Route = createFileRoute("/configuracion/reglas-comision")({
   component: ReglasComisionPage,
   head: () => ({ meta: [{ title: "Reglas de comisión · Correduría OS" }] }),
-  loader: async () => {
-    const [{ data: reglas }, { data: comerciales }] = await Promise.all([
-      supabase
-        .from("reglas_comision")
-        .select(`
-          id, nombre, ramo, aseguradora, comercial_id, porcentaje, bono_fijo, activa, prioridad, fecha_desde, fecha_hasta, created_at,
-          comercial:usuarios!reglas_comision_comercial_id_fkey(nombre)
-        `)
-        .order("prioridad", { ascending: false }),
-      supabase.from("usuarios").select("id, nombre").eq("rol", "comercial").order("nombre"),
-    ]);
-    return { reglas: reglas || [], comerciales: comerciales || [] };
-  },
 });
 
 const RAMOS = ["", "Auto", "Hogar", "Vida", "Salud", "Comercio", "RC", "Decesos"];
@@ -49,13 +36,33 @@ const emptyForm: FormR = {
 };
 
 function ReglasComisionPage() {
-  const { reglas, comerciales } = Route.useLoaderData();
+  const [reglas, setReglas] = useState<any[]>([]);
+  const [comerciales, setComerciales] = useState<any[]>([]);
+  const [cargandoLista, setCargandoLista] = useState(true);
   const router = useRouter();
   const { toast, confirm } = useDialog();
   const { esRoot, loading } = usePermissions();
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
+
+  const cargar = async () => {
+    setCargandoLista(true);
+    const [{ data: rs }, { data: cms }] = await Promise.all([
+      supabase
+        .from("reglas_comision")
+        .select(`
+          id, nombre, ramo, aseguradora, comercial_id, porcentaje, bono_fijo, activa, prioridad, fecha_desde, fecha_hasta, created_at,
+          comercial:usuarios!reglas_comision_comercial_id_fkey(nombre)
+        `)
+        .order("prioridad", { ascending: false }),
+      supabase.from("usuarios").select("id, nombre").eq("rol", "comercial").order("nombre"),
+    ]);
+    setReglas(rs || []);
+    setComerciales(cms || []);
+    setCargandoLista(false);
+  };
+  useEffect(() => { cargar(); }, []);
   const [viewing, setViewing] = useState<any | null>(null);
   const [form, setForm] = useState<FormR>(emptyForm);
 
@@ -113,7 +120,7 @@ function ReglasComisionPage() {
     setBusy(false);
     if (error) { toast("Error: " + error.message, "error"); return; }
     setOpen(false);
-    router.invalidate();
+    cargar();
     toast(editId ? "Regla actualizada" : "Regla creada", "success");
   };
 
@@ -122,7 +129,7 @@ function ReglasComisionPage() {
     if (!ok) return;
     const { error } = await supabase.from("reglas_comision").delete().eq("id", r.id);
     if (error) toast("Error: " + error.message, "error");
-    else { toast("Regla eliminada", "success"); router.invalidate(); }
+    else { toast("Regla eliminada", "success"); cargar(); }
   };
 
   return (

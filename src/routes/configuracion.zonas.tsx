@@ -1,5 +1,5 @@
 import { createFileRoute, useRouter, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ArrowLeft, Plus, Shield, MapPin } from "lucide-react";
 import { PageShell } from "@/components/app/page-shell";
 import { Card, SectionHeader, Modal } from "@/components/app/ui-bits";
@@ -11,8 +11,17 @@ import { useDialog } from "@/components/app/dialog-provider";
 export const Route = createFileRoute("/configuracion/zonas")({
   component: ZonasPage,
   head: () => ({ meta: [{ title: "Zonas · Correduría OS" }] }),
-  loader: async () => {
-    const { data: zonas } = await supabase
+});
+
+function ZonasPage() {
+  const [zonas, setZonas] = useState<any[]>([]);
+  const [jefes, setJefes] = useState<any[]>([]);
+  const [cargandoLista, setCargandoLista] = useState(true);
+  const router = useRouter();
+
+  const cargar = async () => {
+    setCargandoLista(true);
+    const { data: zs } = await supabase
       .from("zonas")
       .select(`
         id, nombre, descripcion, jefe_id, created_at,
@@ -20,7 +29,6 @@ export const Route = createFileRoute("/configuracion/zonas")({
       `)
       .order("nombre");
 
-    // Conteo de comerciales por zona
     const { data: usuariosPorZona } = await supabase
       .from("usuarios")
       .select("zona_id, rol")
@@ -31,21 +39,16 @@ export const Route = createFileRoute("/configuracion/zonas")({
       if (u.zona_id) conteoComerciales.set(u.zona_id, (conteoComerciales.get(u.zona_id) || 0) + 1);
     });
 
-    const { data: jefes } = await supabase
+    const { data: js } = await supabase
       .from("usuarios")
       .select("id, nombre, email, rol")
       .in("rol", ["jefe_zona", "root", "admin"]);
 
-    return {
-      zonas: (zonas || []).map((z: any) => ({ ...z, comerciales: conteoComerciales.get(z.id) || 0 })),
-      jefes: jefes || [],
-    };
-  },
-});
-
-function ZonasPage() {
-  const { zonas, jefes } = Route.useLoaderData();
-  const router = useRouter();
+    setZonas((zs || []).map((z: any) => ({ ...z, comerciales: conteoComerciales.get(z.id) || 0 })));
+    setJefes(js || []);
+    setCargandoLista(false);
+  };
+  useEffect(() => { cargar(); }, []);
   const { puedeGestionarUsuarios, loading } = usePermissions();
   const { toast, confirm } = useDialog();
   const [open, setOpen] = useState(false);
@@ -90,7 +93,7 @@ function ZonasPage() {
       await supabase.from("usuarios").update({ zona_id: editId || (await supabase.from("zonas").select("id").eq("nombre", form.nombre).maybeSingle()).data?.id }).eq("id", form.jefe_id);
     }
     setOpen(false);
-    router.invalidate();
+    cargar();
   };
 
   const borrar = async (z: any) => {
@@ -98,7 +101,7 @@ function ZonasPage() {
     if (!ok) return;
     const { error } = await supabase.from("zonas").delete().eq("id", z.id);
     if (error) toast("Error: " + error.message, "error");
-    else router.invalidate();
+    else cargar();
   };
 
   return (

@@ -1,5 +1,5 @@
 import { createFileRoute, useRouter, Link } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ArrowLeft, UserPlus, Shield, Mail, Phone, Building2, Edit3, UserX, Check } from "lucide-react";
 import { PageShell } from "@/components/app/page-shell";
 import { Card, SectionHeader, StatusBadge, Modal } from "@/components/app/ui-bits";
@@ -12,18 +12,6 @@ import { useDialog } from "@/components/app/dialog-provider";
 export const Route = createFileRoute("/configuracion/usuarios")({
   component: UsuariosPage,
   head: () => ({ meta: [{ title: "Usuarios · Correduría OS" }] }),
-  loader: async () => {
-    // Carga global; el filtrado por jefe_zona se aplica en el componente
-    // (RLS sigue siendo la fuente de verdad — esto es UX defensiva).
-    const [{ data: usuarios }, { data: zonas }] = await Promise.all([
-      supabase
-        .from("usuarios")
-        .select("id, email, nombre, rol, zona_id, jefe_id, telefono, activo, created_at, zonas!usuarios_zona_id_fkey(nombre)")
-        .order("created_at", { ascending: false }),
-      supabase.from("zonas").select("id, nombre").order("nombre"),
-    ]);
-    return { usuarios: usuarios || [], zonas: zonas || [] };
-  },
 });
 
 const ROLES = [
@@ -34,10 +22,12 @@ const ROLES = [
 ] as const;
 
 function UsuariosPage() {
-  const { usuarios: usuariosAll, zonas } = Route.useLoaderData();
   const router = useRouter();
   const { esRoot, esJefeZona, perfil, loading } = usePermissions();
   const { toast, confirm, prompt } = useDialog();
+  const [usuariosAll, setUsuariosAll] = useState<any[]>([]);
+  const [zonas, setZonas] = useState<any[]>([]);
+  const [cargandoLista, setCargandoLista] = useState(true);
   const [editId, setEditId] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     email: "",
@@ -49,18 +39,35 @@ function UsuariosPage() {
     password: "",
   });
 
+  // Datos vía useEffect → la página renderiza inmediatamente, los datos llegan
+  // después. Si la query cuelga, igual ves el form y puedes crear.
+  const cargar = async () => {
+    setCargandoLista(true);
+    const [{ data: us }, { data: zs }] = await Promise.all([
+      supabase
+        .from("usuarios")
+        .select("id, email, nombre, rol, zona_id, jefe_id, telefono, activo, created_at, zonas!usuarios_zona_id_fkey(nombre)")
+        .order("created_at", { ascending: false }),
+      supabase.from("zonas").select("id, nombre").order("nombre"),
+    ]);
+    setUsuariosAll(us || []);
+    setZonas(zs || []);
+    setCargandoLista(false);
+  };
+  useEffect(() => { cargar(); }, []);
+
   // Filtrar: jefe_zona solo ve los de su zona (UX, RLS también lo aplica)
   const usuarios = useMemo(() => {
     if (esRoot) return usuariosAll;
     if (esJefeZona && perfil?.zona_id) {
-      return (usuariosAll as any[]).filter((u: any) => u.zona_id === perfil.zona_id);
+      return usuariosAll.filter((u: any) => u.zona_id === perfil.zona_id);
     }
     return [];
   }, [usuariosAll, esRoot, esJefeZona, perfil?.zona_id]);
 
   // Posibles jefes: root, admin, jefe_zona (cualquiera con rango superior a comercial)
-  const posiblesJefes = (usuariosAll as any[]).filter(
-    (u) => ["root", "admin", "jefe_zona"].includes(u.rol) && u.activo
+  const posiblesJefes = usuariosAll.filter(
+    (u: any) => ["root", "admin", "jefe_zona"].includes(u.rol) && u.activo
   );
   const [busy, setBusy] = useState(false);
   const [open, setOpen] = useState(false);
@@ -126,7 +133,7 @@ function UsuariosPage() {
       setBusy(false);
       if (error) { toast("Error: " + error.message, "error"); return; }
       setOpen(false);
-      router.invalidate();
+      cargar();
       return;
     }
 
@@ -156,7 +163,7 @@ function UsuariosPage() {
     });
     setOpen(false);
     setFormData({ email: "", nombre: "", rol: "comercial", zona_id: "", jefe_id: "", telefono: "", password: "" });
-    router.invalidate();
+    cargar();
   };
 
   const desactivar = async (u: any) => {
@@ -190,7 +197,7 @@ function UsuariosPage() {
     if (!ok) return;
     const { error } = await supabase.from("usuarios").update({ activo: !u.activo }).eq("id", u.id);
     if (error) toast("Error: " + error.message, "error");
-    else router.invalidate();
+    else cargar();
   };
 
   const resetearPassword = async (u: any) => {
@@ -229,7 +236,7 @@ function UsuariosPage() {
     if (!ok) return;
     const res = await eliminarUsuarioAdminFn({ data: { userId: u.id } });
     if (!res.success) toast("Error: " + res.error, "error");
-    else router.invalidate();
+    else cargar();
   };
 
   return (
