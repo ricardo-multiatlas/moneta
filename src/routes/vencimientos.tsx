@@ -253,7 +253,7 @@ function VencimientosPage() {
                       <RowActions
                         actions={[
                           { icon: "view", label: "Ver datos", onClick: () => setViewing(v), tone: "brand" },
-                          { icon: "edit", label: "Editar póliza", to: "/polizas/$id", params: { id: v.polizaId }, disabled: !v.polizaId },
+                          { icon: "edit", label: "Editar póliza", onClick: () => v.polizaId && router.navigate({ to: "/polizas/$id", params: { id: v.polizaId } }), disabled: !v.polizaId },
                           { icon: "print", label: "Imprimir aviso", onClick: () => imprimirVenc(v) },
                           { icon: "download", label: "Descargar PDF", onClick: () => descargarVenc(v) },
                         ]}

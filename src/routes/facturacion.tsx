@@ -269,7 +269,6 @@ function FacturacionPage() {
                       <RowActions
                         actions={[
                           { icon: "view", label: "Ver datos", onClick: () => setViewing(f), tone: "brand" },
-                          { icon: "edit", label: "Editar (próximo)", disabled: true },
                           { icon: "print", label: "Imprimir", onClick: () => imprimirFactura(f) },
                           { icon: "download", label: "Descargar PDF", onClick: () => descargarFactura(f) },
                         ]}

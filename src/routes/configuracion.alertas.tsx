@@ -273,8 +273,7 @@ function AlertasPage() {
                       actions={[
                         { icon: "view", label: "Ver detalle", onClick: () => setVerOpen(a) },
                         { icon: "edit", label: "Editar", onClick: () => abrirEdicion(a), tone: "brand" },
-                        { icon: "print", label: "Imprimir", onClick: () => {}, disabled: true },
-                        { icon: "download", label: "Eliminar", onClick: () => eliminar(a), tone: "danger" },
+                        { icon: "trash", label: "Eliminar", onClick: () => eliminar(a), tone: "danger" },
                       ]}
                     />
                   </td>

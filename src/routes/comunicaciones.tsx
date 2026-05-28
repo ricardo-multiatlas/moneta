@@ -211,9 +211,7 @@ function ComunicacionesPage() {
                         <RowActions
                           actions={[
                             { icon: "view", label: "Ver detalles", onClick: () => { void confirm({ title: c.nombre, message: c.contenido || "Sin contenido", confirmLabel: "OK", cancelLabel: "Cerrar", tone: "brand" }); }, tone: "brand" },
-                            { icon: "edit", label: c.estado === "borrador" ? "Enviar ahora" : "Ya enviada", disabled: c.estado !== "borrador" || !puedeEnviarMasivo, onClick: () => enviarCampana(c) },
-                            { icon: "print", label: "—", disabled: true },
-                            { icon: "download", label: "—", disabled: true },
+                            { icon: "check", label: c.estado === "borrador" ? "Enviar ahora" : "Ya enviada", disabled: c.estado !== "borrador" || !puedeEnviarMasivo, onClick: () => enviarCampana(c), tone: "brand" },
                           ]}
                         />
                       </td>

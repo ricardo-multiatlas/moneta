@@ -173,8 +173,7 @@ function ReglasComisionPage() {
                       actions={[
                         { icon: "view", label: "Ver datos", onClick: () => setViewing(r), tone: "brand" },
                         { icon: "edit", label: "Editar", onClick: () => abrirEditar(r) },
-                        { icon: "print", label: "—", disabled: true },
-                        { icon: "download", label: "Eliminar", onClick: () => eliminar(r), tone: "danger" },
+                        { icon: "trash", label: "Eliminar", onClick: () => eliminar(r), tone: "danger" },
                       ]}
                     />
                   </td>

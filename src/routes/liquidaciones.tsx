@@ -191,9 +191,8 @@ function LiquidacionesPage() {
                   <td className="px-4 py-3">
                     <RowActions
                       actions={[
-                        { icon: "view", label: l.estado === "borrador" ? "Aprobar" : l.estado === "aprobada" ? "Marcar pagada" : "—", disabled: l.estado === "pagada" || l.estado === "cancelada", onClick: () => cambiarEstado(l, l.estado === "borrador" ? "aprobada" : "pagada"), tone: "brand" },
-                        { icon: "edit", label: "Cancelar", disabled: l.estado === "pagada", onClick: () => cambiarEstado(l, "cancelada"), tone: "danger" },
-                        { icon: "print", label: "Imprimir", disabled: true },
+                        { icon: "check", label: l.estado === "borrador" ? "Aprobar" : l.estado === "aprobada" ? "Marcar pagada" : "Completada", disabled: l.estado === "pagada" || l.estado === "cancelada", onClick: () => cambiarEstado(l, l.estado === "borrador" ? "aprobada" : "pagada"), tone: "brand" },
+                        { icon: "x", label: "Cancelar", disabled: l.estado === "pagada" || l.estado === "cancelada", onClick: () => cambiarEstado(l, "cancelada"), tone: "danger" },
                         { icon: "download", label: "Descargar justificante PDF", onClick: () => justificantePDF(l) },
                       ]}
                     />

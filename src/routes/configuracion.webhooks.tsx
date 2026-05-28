@@ -285,8 +285,7 @@ function WebhooksPage() {
                       actions={[
                         { icon: "view", label: "Ver detalle", onClick: () => setVerOpen(w) },
                         { icon: "edit", label: "Editar", onClick: () => abrirEdicion(w), tone: "brand" },
-                        { icon: "print", label: "Imprimir", onClick: () => {}, disabled: true },
-                        { icon: "download", label: "Eliminar", onClick: () => eliminar(w), tone: "danger" },
+                        { icon: "trash", label: "Eliminar", onClick: () => eliminar(w), tone: "danger" },
                       ]}
                     />
                   </td>

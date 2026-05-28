@@ -213,10 +213,8 @@ function IntegracionesPage() {
                   <td className="px-4 py-3">
                     <RowActions
                       actions={[
-                        { icon: "edit", label: "Editar", onClick: () => abrirEdicion(i), tone: "brand" },
                         { icon: "view", label: "Ver detalle", onClick: () => setVerOpen(i) },
-                        { icon: "print", label: "Imprimir", onClick: () => {}, disabled: true },
-                        { icon: "download", label: "Descargar", onClick: () => {}, disabled: true },
+                        { icon: "edit", label: "Editar", onClick: () => abrirEdicion(i), tone: "brand" },
                       ]}
                     />
                   </td>

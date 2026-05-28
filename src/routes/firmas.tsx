@@ -150,9 +150,6 @@ function FirmasPage() {
                       <RowActions
                         actions={[
                           { icon: "view", label: "Ver datos", onClick: () => setViewing(f), tone: "brand" },
-                          { icon: "edit", label: "Reenviar (pendiente)", disabled: true },
-                          { icon: "print", label: "—", disabled: true },
-                          { icon: "download", label: "Descargar (pendiente)", disabled: true },
                         ]}
                       />
                     </td>
