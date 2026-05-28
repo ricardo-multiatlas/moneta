@@ -95,10 +95,9 @@ function AnalisisPage() {
         <div className="mb-5 rounded-md bg-warning/5 ring-1 ring-warning/30 px-4 py-3 flex items-start gap-2.5">
           <AlertTriangle className="size-4 text-warning shrink-0 mt-0.5" />
           <div className="text-[12px] text-warning">
-            <p className="font-medium">Migración v0.8 pendiente</p>
+            <p className="font-medium">Algunas vistas no responden</p>
             <p className="mt-0.5 text-ink-muted">
-              Algunas vistas no están creadas todavía. Aplica el SQL en{" "}
-              <code className="font-mono">supabase/APLICAR_EN_SQL_EDITOR_v4.sql</code> para activar el análisis completo.
+              Si el aviso persiste tras recargar, contacta con el administrador.
             </p>
           </div>
         </div>

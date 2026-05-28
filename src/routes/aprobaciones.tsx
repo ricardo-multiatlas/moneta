@@ -206,10 +206,9 @@ function AprobacionesPage() {
         <div className="mb-5 rounded-md bg-warning/5 ring-1 ring-warning/30 px-4 py-3 flex items-start gap-2.5">
           <AlertTriangle className="size-4 text-warning shrink-0 mt-0.5" />
           <div className="text-[12px] text-warning">
-            <p className="font-medium">Migración v0.8 pendiente</p>
+            <p className="font-medium">Tabla aprobaciones no responde</p>
             <p className="mt-0.5 text-ink-muted">
-              La tabla <code className="font-mono">aprobaciones</code> aún no existe. Aplica el SQL en{" "}
-              <code className="font-mono">supabase/APLICAR_EN_SQL_EDITOR_v4.sql</code>.
+              Si el aviso persiste tras recargar, contacta con el administrador.
             </p>
           </div>
         </div>
@@ -231,7 +230,7 @@ function AprobacionesPage() {
         {items.length === 0 ? (
           <div className="p-10 text-center text-[12px] text-ink-subtle">
             <ShieldCheck className="size-6 text-ink-subtle mx-auto mb-2" />
-            {missing ? "Aplica primero la migración v0.8." : "No hay solicitudes."}
+            {missing ? "Tabla no disponible." : "No hay solicitudes."}
           </div>
         ) : (
           <table className="w-full text-left border-collapse">

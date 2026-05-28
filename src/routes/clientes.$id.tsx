@@ -226,13 +226,13 @@ function ClienteDetallePage() {
         const col = cara === "anverso" ? "dni_anverso_url" : "dni_reverso_url";
         const { error: errUpd } = await supabase.from("clientes").update({ [col]: url }).eq("id", cliente.id);
         if (errUpd) {
-          toast("Migración v0.7 pendiente — el DNI está subido pero no se persiste el enlace.", "warning");
+          toast("DNI subido al almacenamiento pero el enlace no se guardó en BD: " + (errUpd?.message || "columna no disponible"), "warning");
         } else {
           toast("DNI subido", "success");
           router.invalidate();
         }
-      } catch {
-        toast("Migración v0.7 pendiente — el DNI está subido pero no se persiste el enlace.", "warning");
+      } catch (e: any) {
+        toast("DNI subido al almacenamiento pero el enlace no se guardó en BD: " + (e?.message || "error desconocido"), "warning");
       }
     } finally {
       setBusyDni(null);

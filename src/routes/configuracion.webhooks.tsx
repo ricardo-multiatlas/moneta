@@ -70,14 +70,14 @@ function WebhooksPage() {
       endpsMissing = true;
     }
 
-    // email_eventos (de Resend)
+    // email_eventos (de Resend) — la tabla tiene `recibido_at`, no `created_at`
     let evMissing = false;
     let evData: any[] = [];
     try {
       const { data, error } = await supabase
         .from("email_eventos")
         .select("*")
-        .order("created_at", { ascending: false })
+        .order("recibido_at", { ascending: false })
         .limit(50);
       if (error) evMissing = true;
       else evData = data || [];
@@ -211,19 +211,19 @@ function WebhooksPage() {
         <div className="mb-5 rounded-md bg-warning/5 ring-1 ring-warning/30 px-4 py-3 flex items-start gap-2.5">
           <AlertTriangle className="size-4 text-warning shrink-0 mt-0.5" />
           <div className="text-[12px] text-warning">
-            <p className="font-medium">Migración v0.8 pendiente</p>
+            <p className="font-medium">Tabla(s) de webhooks no disponibles</p>
             <p className="mt-0.5 text-ink-muted">
               {missingEndpoints && (
                 <>
-                  La tabla <code className="font-mono">webhook_endpoints</code> aún no existe.{" "}
+                  La tabla <code className="font-mono">webhook_endpoints</code> no responde.{" "}
                 </>
               )}
               {missingEventos && (
                 <>
-                  La tabla <code className="font-mono">email_eventos</code> aún no existe.{" "}
+                  La tabla <code className="font-mono">email_eventos</code> no responde.{" "}
                 </>
               )}
-              Aplica el SQL en <code className="font-mono">supabase/APLICAR_EN_SQL_EDITOR_v4.sql</code>.
+              Si el aviso persiste tras recargar, contacta con el administrador.
             </p>
           </div>
         </div>
