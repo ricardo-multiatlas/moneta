@@ -29,6 +29,9 @@ dist-ssr
 *_temp_*.ts
 _temp_*
 
+# Office lock files (Word/Excel crean estos al abrir un documento)
+~$*
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
