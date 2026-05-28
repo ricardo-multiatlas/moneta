@@ -66,12 +66,41 @@ async function normalizeCatastrophicSsrResponse(response: Response): Promise<Res
   return brandedErrorResponse();
 }
 
+/**
+ * Solo cachear archivos con hash en el nombre (assets generados por vite).
+ * El HTML del SSR y cualquier otra cosa: nunca cachear, así los users
+ * siempre reciben la versión recién desplegada.
+ */
+function applyCacheHeaders(request: Request, response: Response): Response {
+  const url = new URL(request.url);
+  const isHashedAsset = /\/assets\/[\w.-]+-[A-Za-z0-9_-]{8,}\.(?:js|css|png|jpg|webp|svg|woff2?)$/.test(url.pathname);
+  const contentType = response.headers.get("content-type") ?? "";
+  const isHtml = contentType.includes("text/html");
+
+  if (isHashedAsset) {
+    // Assets hash-versionados: cache largo, immutable
+    const headers = new Headers(response.headers);
+    headers.set("cache-control", "public, max-age=31536000, immutable");
+    return new Response(response.body, { status: response.status, statusText: response.statusText, headers });
+  }
+  if (isHtml) {
+    // HTML SSR: nunca cachear, siempre revalidar
+    const headers = new Headers(response.headers);
+    headers.set("cache-control", "no-store, no-cache, must-revalidate, max-age=0");
+    headers.set("pragma", "no-cache");
+    headers.set("expires", "0");
+    return new Response(response.body, { status: response.status, statusText: response.statusText, headers });
+  }
+  return response;
+}
+
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
     try {
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
-      return await normalizeCatastrophicSsrResponse(response);
+      const normalized = await normalizeCatastrophicSsrResponse(response);
+      return applyCacheHeaders(request, normalized);
     } catch (error) {
       console.error(error);
       return brandedErrorResponse();

@@ -10,17 +10,48 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VencimientosRouteImport } from './routes/vencimientos'
+import { Route as TarificadorRouteImport } from './routes/tarificador'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as ReportesRouteImport } from './routes/reportes'
+import { Route as PresupuestosRouteImport } from './routes/presupuestos'
 import { Route as PolizasRouteImport } from './routes/polizas'
+import { Route as MiPanelRouteImport } from './routes/mi-panel'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as LiquidacionesRouteImport } from './routes/liquidaciones'
+import { Route as FirmasRouteImport } from './routes/firmas'
 import { Route as FacturacionRouteImport } from './routes/facturacion'
+import { Route as EquipoRouteImport } from './routes/equipo'
+import { Route as DashboardZonaRouteImport } from './routes/dashboard-zona'
+import { Route as ConfiguracionRouteImport } from './routes/configuracion'
+import { Route as ComunicacionesRouteImport } from './routes/comunicaciones'
 import { Route as ComisionesRouteImport } from './routes/comisiones'
 import { Route as ClientesRouteImport } from './routes/clientes'
 import { Route as CaptacionRouteImport } from './routes/captacion'
+import { Route as AprobacionesRouteImport } from './routes/aprobaciones'
+import { Route as AnalisisRouteImport } from './routes/analisis'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as VencimientosCalendarioRouteImport } from './routes/vencimientos.calendario'
+import { Route as PolizasIdRouteImport } from './routes/polizas.$id'
+import { Route as MiPanelDisponibilidadRouteImport } from './routes/mi-panel.disponibilidad'
+import { Route as ConfiguracionZonasRouteImport } from './routes/configuracion.zonas'
+import { Route as ConfiguracionWebhooksRouteImport } from './routes/configuracion.webhooks'
+import { Route as ConfiguracionUsuariosRouteImport } from './routes/configuracion.usuarios'
+import { Route as ConfiguracionReglasComisionRouteImport } from './routes/configuracion.reglas-comision'
+import { Route as ConfiguracionPermisosRouteImport } from './routes/configuracion.permisos'
+import { Route as ConfiguracionPerfilRouteImport } from './routes/configuracion.perfil'
+import { Route as ConfiguracionIntegracionesRouteImport } from './routes/configuracion.integraciones'
+import { Route as ConfiguracionBackupRouteImport } from './routes/configuracion.backup'
+import { Route as ConfiguracionAlertasRouteImport } from './routes/configuracion.alertas'
+import { Route as ClientesIdRouteImport } from './routes/clientes.$id'
 
 const VencimientosRoute = VencimientosRouteImport.update({
   id: '/vencimientos',
   path: '/vencimientos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TarificadorRoute = TarificadorRouteImport.update({
+  id: '/tarificador',
+  path: '/tarificador',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -28,14 +59,64 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ReportesRoute = ReportesRouteImport.update({
+  id: '/reportes',
+  path: '/reportes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PresupuestosRoute = PresupuestosRouteImport.update({
+  id: '/presupuestos',
+  path: '/presupuestos',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PolizasRoute = PolizasRouteImport.update({
   id: '/polizas',
   path: '/polizas',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MiPanelRoute = MiPanelRouteImport.update({
+  id: '/mi-panel',
+  path: '/mi-panel',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LiquidacionesRoute = LiquidacionesRouteImport.update({
+  id: '/liquidaciones',
+  path: '/liquidaciones',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FirmasRoute = FirmasRouteImport.update({
+  id: '/firmas',
+  path: '/firmas',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FacturacionRoute = FacturacionRouteImport.update({
   id: '/facturacion',
   path: '/facturacion',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EquipoRoute = EquipoRouteImport.update({
+  id: '/equipo',
+  path: '/equipo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardZonaRoute = DashboardZonaRouteImport.update({
+  id: '/dashboard-zona',
+  path: '/dashboard-zona',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConfiguracionRoute = ConfiguracionRouteImport.update({
+  id: '/configuracion',
+  path: '/configuracion',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ComunicacionesRoute = ComunicacionesRouteImport.update({
+  id: '/comunicaciones',
+  path: '/comunicaciones',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ComisionesRoute = ComisionesRouteImport.update({
@@ -53,85 +134,331 @@ const CaptacionRoute = CaptacionRouteImport.update({
   path: '/captacion',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AprobacionesRoute = AprobacionesRouteImport.update({
+  id: '/aprobaciones',
+  path: '/aprobaciones',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AnalisisRoute = AnalisisRouteImport.update({
+  id: '/analisis',
+  path: '/analisis',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const VencimientosCalendarioRoute = VencimientosCalendarioRouteImport.update({
+  id: '/calendario',
+  path: '/calendario',
+  getParentRoute: () => VencimientosRoute,
+} as any)
+const PolizasIdRoute = PolizasIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => PolizasRoute,
+} as any)
+const MiPanelDisponibilidadRoute = MiPanelDisponibilidadRouteImport.update({
+  id: '/disponibilidad',
+  path: '/disponibilidad',
+  getParentRoute: () => MiPanelRoute,
+} as any)
+const ConfiguracionZonasRoute = ConfiguracionZonasRouteImport.update({
+  id: '/zonas',
+  path: '/zonas',
+  getParentRoute: () => ConfiguracionRoute,
+} as any)
+const ConfiguracionWebhooksRoute = ConfiguracionWebhooksRouteImport.update({
+  id: '/webhooks',
+  path: '/webhooks',
+  getParentRoute: () => ConfiguracionRoute,
+} as any)
+const ConfiguracionUsuariosRoute = ConfiguracionUsuariosRouteImport.update({
+  id: '/usuarios',
+  path: '/usuarios',
+  getParentRoute: () => ConfiguracionRoute,
+} as any)
+const ConfiguracionReglasComisionRoute =
+  ConfiguracionReglasComisionRouteImport.update({
+    id: '/reglas-comision',
+    path: '/reglas-comision',
+    getParentRoute: () => ConfiguracionRoute,
+  } as any)
+const ConfiguracionPermisosRoute = ConfiguracionPermisosRouteImport.update({
+  id: '/permisos',
+  path: '/permisos',
+  getParentRoute: () => ConfiguracionRoute,
+} as any)
+const ConfiguracionPerfilRoute = ConfiguracionPerfilRouteImport.update({
+  id: '/perfil',
+  path: '/perfil',
+  getParentRoute: () => ConfiguracionRoute,
+} as any)
+const ConfiguracionIntegracionesRoute =
+  ConfiguracionIntegracionesRouteImport.update({
+    id: '/integraciones',
+    path: '/integraciones',
+    getParentRoute: () => ConfiguracionRoute,
+  } as any)
+const ConfiguracionBackupRoute = ConfiguracionBackupRouteImport.update({
+  id: '/backup',
+  path: '/backup',
+  getParentRoute: () => ConfiguracionRoute,
+} as any)
+const ConfiguracionAlertasRoute = ConfiguracionAlertasRouteImport.update({
+  id: '/alertas',
+  path: '/alertas',
+  getParentRoute: () => ConfiguracionRoute,
+} as any)
+const ClientesIdRoute = ClientesIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => ClientesRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/analisis': typeof AnalisisRoute
+  '/aprobaciones': typeof AprobacionesRoute
   '/captacion': typeof CaptacionRoute
-  '/clientes': typeof ClientesRoute
+  '/clientes': typeof ClientesRouteWithChildren
   '/comisiones': typeof ComisionesRoute
+  '/comunicaciones': typeof ComunicacionesRoute
+  '/configuracion': typeof ConfiguracionRouteWithChildren
+  '/dashboard-zona': typeof DashboardZonaRoute
+  '/equipo': typeof EquipoRoute
   '/facturacion': typeof FacturacionRoute
-  '/polizas': typeof PolizasRoute
+  '/firmas': typeof FirmasRoute
+  '/liquidaciones': typeof LiquidacionesRoute
+  '/login': typeof LoginRoute
+  '/mi-panel': typeof MiPanelRouteWithChildren
+  '/polizas': typeof PolizasRouteWithChildren
+  '/presupuestos': typeof PresupuestosRoute
+  '/reportes': typeof ReportesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/vencimientos': typeof VencimientosRoute
+  '/tarificador': typeof TarificadorRoute
+  '/vencimientos': typeof VencimientosRouteWithChildren
+  '/clientes/$id': typeof ClientesIdRoute
+  '/configuracion/alertas': typeof ConfiguracionAlertasRoute
+  '/configuracion/backup': typeof ConfiguracionBackupRoute
+  '/configuracion/integraciones': typeof ConfiguracionIntegracionesRoute
+  '/configuracion/perfil': typeof ConfiguracionPerfilRoute
+  '/configuracion/permisos': typeof ConfiguracionPermisosRoute
+  '/configuracion/reglas-comision': typeof ConfiguracionReglasComisionRoute
+  '/configuracion/usuarios': typeof ConfiguracionUsuariosRoute
+  '/configuracion/webhooks': typeof ConfiguracionWebhooksRoute
+  '/configuracion/zonas': typeof ConfiguracionZonasRoute
+  '/mi-panel/disponibilidad': typeof MiPanelDisponibilidadRoute
+  '/polizas/$id': typeof PolizasIdRoute
+  '/vencimientos/calendario': typeof VencimientosCalendarioRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/analisis': typeof AnalisisRoute
+  '/aprobaciones': typeof AprobacionesRoute
   '/captacion': typeof CaptacionRoute
-  '/clientes': typeof ClientesRoute
+  '/clientes': typeof ClientesRouteWithChildren
   '/comisiones': typeof ComisionesRoute
+  '/comunicaciones': typeof ComunicacionesRoute
+  '/configuracion': typeof ConfiguracionRouteWithChildren
+  '/dashboard-zona': typeof DashboardZonaRoute
+  '/equipo': typeof EquipoRoute
   '/facturacion': typeof FacturacionRoute
-  '/polizas': typeof PolizasRoute
+  '/firmas': typeof FirmasRoute
+  '/liquidaciones': typeof LiquidacionesRoute
+  '/login': typeof LoginRoute
+  '/mi-panel': typeof MiPanelRouteWithChildren
+  '/polizas': typeof PolizasRouteWithChildren
+  '/presupuestos': typeof PresupuestosRoute
+  '/reportes': typeof ReportesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/vencimientos': typeof VencimientosRoute
+  '/tarificador': typeof TarificadorRoute
+  '/vencimientos': typeof VencimientosRouteWithChildren
+  '/clientes/$id': typeof ClientesIdRoute
+  '/configuracion/alertas': typeof ConfiguracionAlertasRoute
+  '/configuracion/backup': typeof ConfiguracionBackupRoute
+  '/configuracion/integraciones': typeof ConfiguracionIntegracionesRoute
+  '/configuracion/perfil': typeof ConfiguracionPerfilRoute
+  '/configuracion/permisos': typeof ConfiguracionPermisosRoute
+  '/configuracion/reglas-comision': typeof ConfiguracionReglasComisionRoute
+  '/configuracion/usuarios': typeof ConfiguracionUsuariosRoute
+  '/configuracion/webhooks': typeof ConfiguracionWebhooksRoute
+  '/configuracion/zonas': typeof ConfiguracionZonasRoute
+  '/mi-panel/disponibilidad': typeof MiPanelDisponibilidadRoute
+  '/polizas/$id': typeof PolizasIdRoute
+  '/vencimientos/calendario': typeof VencimientosCalendarioRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/analisis': typeof AnalisisRoute
+  '/aprobaciones': typeof AprobacionesRoute
   '/captacion': typeof CaptacionRoute
-  '/clientes': typeof ClientesRoute
+  '/clientes': typeof ClientesRouteWithChildren
   '/comisiones': typeof ComisionesRoute
+  '/comunicaciones': typeof ComunicacionesRoute
+  '/configuracion': typeof ConfiguracionRouteWithChildren
+  '/dashboard-zona': typeof DashboardZonaRoute
+  '/equipo': typeof EquipoRoute
   '/facturacion': typeof FacturacionRoute
-  '/polizas': typeof PolizasRoute
+  '/firmas': typeof FirmasRoute
+  '/liquidaciones': typeof LiquidacionesRoute
+  '/login': typeof LoginRoute
+  '/mi-panel': typeof MiPanelRouteWithChildren
+  '/polizas': typeof PolizasRouteWithChildren
+  '/presupuestos': typeof PresupuestosRoute
+  '/reportes': typeof ReportesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/vencimientos': typeof VencimientosRoute
+  '/tarificador': typeof TarificadorRoute
+  '/vencimientos': typeof VencimientosRouteWithChildren
+  '/clientes/$id': typeof ClientesIdRoute
+  '/configuracion/alertas': typeof ConfiguracionAlertasRoute
+  '/configuracion/backup': typeof ConfiguracionBackupRoute
+  '/configuracion/integraciones': typeof ConfiguracionIntegracionesRoute
+  '/configuracion/perfil': typeof ConfiguracionPerfilRoute
+  '/configuracion/permisos': typeof ConfiguracionPermisosRoute
+  '/configuracion/reglas-comision': typeof ConfiguracionReglasComisionRoute
+  '/configuracion/usuarios': typeof ConfiguracionUsuariosRoute
+  '/configuracion/webhooks': typeof ConfiguracionWebhooksRoute
+  '/configuracion/zonas': typeof ConfiguracionZonasRoute
+  '/mi-panel/disponibilidad': typeof MiPanelDisponibilidadRoute
+  '/polizas/$id': typeof PolizasIdRoute
+  '/vencimientos/calendario': typeof VencimientosCalendarioRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/analisis'
+    | '/aprobaciones'
     | '/captacion'
     | '/clientes'
     | '/comisiones'
+    | '/comunicaciones'
+    | '/configuracion'
+    | '/dashboard-zona'
+    | '/equipo'
     | '/facturacion'
+    | '/firmas'
+    | '/liquidaciones'
+    | '/login'
+    | '/mi-panel'
     | '/polizas'
+    | '/presupuestos'
+    | '/reportes'
     | '/sitemap.xml'
+    | '/tarificador'
     | '/vencimientos'
+    | '/clientes/$id'
+    | '/configuracion/alertas'
+    | '/configuracion/backup'
+    | '/configuracion/integraciones'
+    | '/configuracion/perfil'
+    | '/configuracion/permisos'
+    | '/configuracion/reglas-comision'
+    | '/configuracion/usuarios'
+    | '/configuracion/webhooks'
+    | '/configuracion/zonas'
+    | '/mi-panel/disponibilidad'
+    | '/polizas/$id'
+    | '/vencimientos/calendario'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/analisis'
+    | '/aprobaciones'
     | '/captacion'
     | '/clientes'
     | '/comisiones'
+    | '/comunicaciones'
+    | '/configuracion'
+    | '/dashboard-zona'
+    | '/equipo'
     | '/facturacion'
+    | '/firmas'
+    | '/liquidaciones'
+    | '/login'
+    | '/mi-panel'
     | '/polizas'
+    | '/presupuestos'
+    | '/reportes'
     | '/sitemap.xml'
+    | '/tarificador'
     | '/vencimientos'
+    | '/clientes/$id'
+    | '/configuracion/alertas'
+    | '/configuracion/backup'
+    | '/configuracion/integraciones'
+    | '/configuracion/perfil'
+    | '/configuracion/permisos'
+    | '/configuracion/reglas-comision'
+    | '/configuracion/usuarios'
+    | '/configuracion/webhooks'
+    | '/configuracion/zonas'
+    | '/mi-panel/disponibilidad'
+    | '/polizas/$id'
+    | '/vencimientos/calendario'
   id:
     | '__root__'
     | '/'
+    | '/analisis'
+    | '/aprobaciones'
     | '/captacion'
     | '/clientes'
     | '/comisiones'
+    | '/comunicaciones'
+    | '/configuracion'
+    | '/dashboard-zona'
+    | '/equipo'
     | '/facturacion'
+    | '/firmas'
+    | '/liquidaciones'
+    | '/login'
+    | '/mi-panel'
     | '/polizas'
+    | '/presupuestos'
+    | '/reportes'
     | '/sitemap.xml'
+    | '/tarificador'
     | '/vencimientos'
+    | '/clientes/$id'
+    | '/configuracion/alertas'
+    | '/configuracion/backup'
+    | '/configuracion/integraciones'
+    | '/configuracion/perfil'
+    | '/configuracion/permisos'
+    | '/configuracion/reglas-comision'
+    | '/configuracion/usuarios'
+    | '/configuracion/webhooks'
+    | '/configuracion/zonas'
+    | '/mi-panel/disponibilidad'
+    | '/polizas/$id'
+    | '/vencimientos/calendario'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AnalisisRoute: typeof AnalisisRoute
+  AprobacionesRoute: typeof AprobacionesRoute
   CaptacionRoute: typeof CaptacionRoute
-  ClientesRoute: typeof ClientesRoute
+  ClientesRoute: typeof ClientesRouteWithChildren
   ComisionesRoute: typeof ComisionesRoute
+  ComunicacionesRoute: typeof ComunicacionesRoute
+  ConfiguracionRoute: typeof ConfiguracionRouteWithChildren
+  DashboardZonaRoute: typeof DashboardZonaRoute
+  EquipoRoute: typeof EquipoRoute
   FacturacionRoute: typeof FacturacionRoute
-  PolizasRoute: typeof PolizasRoute
+  FirmasRoute: typeof FirmasRoute
+  LiquidacionesRoute: typeof LiquidacionesRoute
+  LoginRoute: typeof LoginRoute
+  MiPanelRoute: typeof MiPanelRouteWithChildren
+  PolizasRoute: typeof PolizasRouteWithChildren
+  PresupuestosRoute: typeof PresupuestosRoute
+  ReportesRoute: typeof ReportesRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
-  VencimientosRoute: typeof VencimientosRoute
+  TarificadorRoute: typeof TarificadorRoute
+  VencimientosRoute: typeof VencimientosRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -143,11 +470,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VencimientosRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/tarificador': {
+      id: '/tarificador'
+      path: '/tarificador'
+      fullPath: '/tarificador'
+      preLoaderRoute: typeof TarificadorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sitemap.xml': {
       id: '/sitemap.xml'
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reportes': {
+      id: '/reportes'
+      path: '/reportes'
+      fullPath: '/reportes'
+      preLoaderRoute: typeof ReportesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/presupuestos': {
+      id: '/presupuestos'
+      path: '/presupuestos'
+      fullPath: '/presupuestos'
+      preLoaderRoute: typeof PresupuestosRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/polizas': {
@@ -157,11 +505,67 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PolizasRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/mi-panel': {
+      id: '/mi-panel'
+      path: '/mi-panel'
+      fullPath: '/mi-panel'
+      preLoaderRoute: typeof MiPanelRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/liquidaciones': {
+      id: '/liquidaciones'
+      path: '/liquidaciones'
+      fullPath: '/liquidaciones'
+      preLoaderRoute: typeof LiquidacionesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/firmas': {
+      id: '/firmas'
+      path: '/firmas'
+      fullPath: '/firmas'
+      preLoaderRoute: typeof FirmasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/facturacion': {
       id: '/facturacion'
       path: '/facturacion'
       fullPath: '/facturacion'
       preLoaderRoute: typeof FacturacionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/equipo': {
+      id: '/equipo'
+      path: '/equipo'
+      fullPath: '/equipo'
+      preLoaderRoute: typeof EquipoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard-zona': {
+      id: '/dashboard-zona'
+      path: '/dashboard-zona'
+      fullPath: '/dashboard-zona'
+      preLoaderRoute: typeof DashboardZonaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/configuracion': {
+      id: '/configuracion'
+      path: '/configuracion'
+      fullPath: '/configuracion'
+      preLoaderRoute: typeof ConfiguracionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/comunicaciones': {
+      id: '/comunicaciones'
+      path: '/comunicaciones'
+      fullPath: '/comunicaciones'
+      preLoaderRoute: typeof ComunicacionesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/comisiones': {
@@ -185,6 +589,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CaptacionRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/aprobaciones': {
+      id: '/aprobaciones'
+      path: '/aprobaciones'
+      fullPath: '/aprobaciones'
+      preLoaderRoute: typeof AprobacionesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/analisis': {
+      id: '/analisis'
+      path: '/analisis'
+      fullPath: '/analisis'
+      preLoaderRoute: typeof AnalisisRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -192,18 +610,196 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/vencimientos/calendario': {
+      id: '/vencimientos/calendario'
+      path: '/calendario'
+      fullPath: '/vencimientos/calendario'
+      preLoaderRoute: typeof VencimientosCalendarioRouteImport
+      parentRoute: typeof VencimientosRoute
+    }
+    '/polizas/$id': {
+      id: '/polizas/$id'
+      path: '/$id'
+      fullPath: '/polizas/$id'
+      preLoaderRoute: typeof PolizasIdRouteImport
+      parentRoute: typeof PolizasRoute
+    }
+    '/mi-panel/disponibilidad': {
+      id: '/mi-panel/disponibilidad'
+      path: '/disponibilidad'
+      fullPath: '/mi-panel/disponibilidad'
+      preLoaderRoute: typeof MiPanelDisponibilidadRouteImport
+      parentRoute: typeof MiPanelRoute
+    }
+    '/configuracion/zonas': {
+      id: '/configuracion/zonas'
+      path: '/zonas'
+      fullPath: '/configuracion/zonas'
+      preLoaderRoute: typeof ConfiguracionZonasRouteImport
+      parentRoute: typeof ConfiguracionRoute
+    }
+    '/configuracion/webhooks': {
+      id: '/configuracion/webhooks'
+      path: '/webhooks'
+      fullPath: '/configuracion/webhooks'
+      preLoaderRoute: typeof ConfiguracionWebhooksRouteImport
+      parentRoute: typeof ConfiguracionRoute
+    }
+    '/configuracion/usuarios': {
+      id: '/configuracion/usuarios'
+      path: '/usuarios'
+      fullPath: '/configuracion/usuarios'
+      preLoaderRoute: typeof ConfiguracionUsuariosRouteImport
+      parentRoute: typeof ConfiguracionRoute
+    }
+    '/configuracion/reglas-comision': {
+      id: '/configuracion/reglas-comision'
+      path: '/reglas-comision'
+      fullPath: '/configuracion/reglas-comision'
+      preLoaderRoute: typeof ConfiguracionReglasComisionRouteImport
+      parentRoute: typeof ConfiguracionRoute
+    }
+    '/configuracion/permisos': {
+      id: '/configuracion/permisos'
+      path: '/permisos'
+      fullPath: '/configuracion/permisos'
+      preLoaderRoute: typeof ConfiguracionPermisosRouteImport
+      parentRoute: typeof ConfiguracionRoute
+    }
+    '/configuracion/perfil': {
+      id: '/configuracion/perfil'
+      path: '/perfil'
+      fullPath: '/configuracion/perfil'
+      preLoaderRoute: typeof ConfiguracionPerfilRouteImport
+      parentRoute: typeof ConfiguracionRoute
+    }
+    '/configuracion/integraciones': {
+      id: '/configuracion/integraciones'
+      path: '/integraciones'
+      fullPath: '/configuracion/integraciones'
+      preLoaderRoute: typeof ConfiguracionIntegracionesRouteImport
+      parentRoute: typeof ConfiguracionRoute
+    }
+    '/configuracion/backup': {
+      id: '/configuracion/backup'
+      path: '/backup'
+      fullPath: '/configuracion/backup'
+      preLoaderRoute: typeof ConfiguracionBackupRouteImport
+      parentRoute: typeof ConfiguracionRoute
+    }
+    '/configuracion/alertas': {
+      id: '/configuracion/alertas'
+      path: '/alertas'
+      fullPath: '/configuracion/alertas'
+      preLoaderRoute: typeof ConfiguracionAlertasRouteImport
+      parentRoute: typeof ConfiguracionRoute
+    }
+    '/clientes/$id': {
+      id: '/clientes/$id'
+      path: '/$id'
+      fullPath: '/clientes/$id'
+      preLoaderRoute: typeof ClientesIdRouteImport
+      parentRoute: typeof ClientesRoute
+    }
   }
 }
 
+interface ClientesRouteChildren {
+  ClientesIdRoute: typeof ClientesIdRoute
+}
+
+const ClientesRouteChildren: ClientesRouteChildren = {
+  ClientesIdRoute: ClientesIdRoute,
+}
+
+const ClientesRouteWithChildren = ClientesRoute._addFileChildren(
+  ClientesRouteChildren,
+)
+
+interface ConfiguracionRouteChildren {
+  ConfiguracionAlertasRoute: typeof ConfiguracionAlertasRoute
+  ConfiguracionBackupRoute: typeof ConfiguracionBackupRoute
+  ConfiguracionIntegracionesRoute: typeof ConfiguracionIntegracionesRoute
+  ConfiguracionPerfilRoute: typeof ConfiguracionPerfilRoute
+  ConfiguracionPermisosRoute: typeof ConfiguracionPermisosRoute
+  ConfiguracionReglasComisionRoute: typeof ConfiguracionReglasComisionRoute
+  ConfiguracionUsuariosRoute: typeof ConfiguracionUsuariosRoute
+  ConfiguracionWebhooksRoute: typeof ConfiguracionWebhooksRoute
+  ConfiguracionZonasRoute: typeof ConfiguracionZonasRoute
+}
+
+const ConfiguracionRouteChildren: ConfiguracionRouteChildren = {
+  ConfiguracionAlertasRoute: ConfiguracionAlertasRoute,
+  ConfiguracionBackupRoute: ConfiguracionBackupRoute,
+  ConfiguracionIntegracionesRoute: ConfiguracionIntegracionesRoute,
+  ConfiguracionPerfilRoute: ConfiguracionPerfilRoute,
+  ConfiguracionPermisosRoute: ConfiguracionPermisosRoute,
+  ConfiguracionReglasComisionRoute: ConfiguracionReglasComisionRoute,
+  ConfiguracionUsuariosRoute: ConfiguracionUsuariosRoute,
+  ConfiguracionWebhooksRoute: ConfiguracionWebhooksRoute,
+  ConfiguracionZonasRoute: ConfiguracionZonasRoute,
+}
+
+const ConfiguracionRouteWithChildren = ConfiguracionRoute._addFileChildren(
+  ConfiguracionRouteChildren,
+)
+
+interface MiPanelRouteChildren {
+  MiPanelDisponibilidadRoute: typeof MiPanelDisponibilidadRoute
+}
+
+const MiPanelRouteChildren: MiPanelRouteChildren = {
+  MiPanelDisponibilidadRoute: MiPanelDisponibilidadRoute,
+}
+
+const MiPanelRouteWithChildren =
+  MiPanelRoute._addFileChildren(MiPanelRouteChildren)
+
+interface PolizasRouteChildren {
+  PolizasIdRoute: typeof PolizasIdRoute
+}
+
+const PolizasRouteChildren: PolizasRouteChildren = {
+  PolizasIdRoute: PolizasIdRoute,
+}
+
+const PolizasRouteWithChildren =
+  PolizasRoute._addFileChildren(PolizasRouteChildren)
+
+interface VencimientosRouteChildren {
+  VencimientosCalendarioRoute: typeof VencimientosCalendarioRoute
+}
+
+const VencimientosRouteChildren: VencimientosRouteChildren = {
+  VencimientosCalendarioRoute: VencimientosCalendarioRoute,
+}
+
+const VencimientosRouteWithChildren = VencimientosRoute._addFileChildren(
+  VencimientosRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AnalisisRoute: AnalisisRoute,
+  AprobacionesRoute: AprobacionesRoute,
   CaptacionRoute: CaptacionRoute,
-  ClientesRoute: ClientesRoute,
+  ClientesRoute: ClientesRouteWithChildren,
   ComisionesRoute: ComisionesRoute,
+  ComunicacionesRoute: ComunicacionesRoute,
+  ConfiguracionRoute: ConfiguracionRouteWithChildren,
+  DashboardZonaRoute: DashboardZonaRoute,
+  EquipoRoute: EquipoRoute,
   FacturacionRoute: FacturacionRoute,
-  PolizasRoute: PolizasRoute,
+  FirmasRoute: FirmasRoute,
+  LiquidacionesRoute: LiquidacionesRoute,
+  LoginRoute: LoginRoute,
+  MiPanelRoute: MiPanelRouteWithChildren,
+  PolizasRoute: PolizasRouteWithChildren,
+  PresupuestosRoute: PresupuestosRoute,
+  ReportesRoute: ReportesRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
-  VencimientosRoute: VencimientosRoute,
+  TarificadorRoute: TarificadorRoute,
+  VencimientosRoute: VencimientosRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

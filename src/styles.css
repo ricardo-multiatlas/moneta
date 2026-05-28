@@ -78,99 +78,114 @@
 :root {
   --radius: 0.625rem;
 
-  /* Backgrounds */
-  --background: oklch(0.985 0.002 90);
-  --foreground: oklch(0.18 0.02 250);
-  --surface: oklch(1 0 0);
-  --surface-muted: oklch(0.97 0.004 250);
+  /* ===== Paleta Moneta Seguros ===== */
+  /* Tomada directamente de monetaseguros.com — burgundy + gold premium */
 
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.18 0.02 250);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.18 0.02 250);
+  /* Backgrounds: cream pálido (#faf7f5 -> oklch) */
+  --background: #faf7f5;
+  --foreground: #1a1215;
+  --surface: #ffffff;
+  --surface-muted: #f0eced;
 
-  /* Brand: deep sovereign green */
-  --brand: oklch(0.36 0.07 160);
-  --brand-foreground: oklch(0.985 0.002 90);
-  --brand-soft: oklch(0.95 0.03 160);
-  --primary: oklch(0.36 0.07 160);
-  --primary-foreground: oklch(0.985 0.002 90);
+  --card: #ffffff;
+  --card-foreground: #1a1215;
+  --popover: #ffffff;
+  --popover-foreground: #1a1215;
 
-  --secondary: oklch(0.96 0.005 250);
-  --secondary-foreground: oklch(0.22 0.02 250);
-  --muted: oklch(0.96 0.005 250);
-  --muted-foreground: oklch(0.5 0.015 250);
+  /* Brand: burgundy/vino primario de Moneta (#8b6262) */
+  --brand: #8b6262;
+  --brand-foreground: #ffffff;
+  --brand-soft: #e8d5d5;
+  --primary: #8b6262;
+  --primary-foreground: #ffffff;
 
-  --accent: oklch(0.93 0.04 75); /* tan/parchment */
-  --accent-foreground: oklch(0.22 0.02 250);
+  --secondary: #f0eced;
+  --secondary-foreground: #3d2828;
+  --muted: #f0eced;
+  --muted-foreground: #6e6468;
 
-  --destructive: oklch(0.58 0.21 27);
-  --destructive-foreground: oklch(0.985 0.002 90);
-  --danger: oklch(0.58 0.21 27);
-  --warning: oklch(0.7 0.15 75);
-  --success: oklch(0.55 0.13 160);
-  --info: oklch(0.55 0.15 250);
+  /* Accent: dorado premium (#d4a853) — el sello visual de Moneta */
+  --accent: #d4a853;
+  --accent-foreground: #1a1215;
 
-  --border: oklch(0.92 0.005 250);
-  --input: oklch(0.92 0.005 250);
-  --ring: oklch(0.36 0.07 160);
+  --destructive: #c0392b;
+  --destructive-foreground: #ffffff;
+  --danger: #c0392b;
+  --warning: #d4a853;
+  --success: #5c8a4f;
+  --info: #6e8aa6;
 
-  --ink: oklch(0.18 0.02 250);
-  --ink-muted: oklch(0.5 0.015 250);
-  --ink-subtle: oklch(0.7 0.01 250);
+  --border: #e0d8db;
+  --input: #e0d8db;
+  --ring: #8b6262;
 
-  --chart-1: oklch(0.36 0.07 160);
-  --chart-2: oklch(0.6 0.12 220);
-  --chart-3: oklch(0.7 0.15 75);
-  --chart-4: oklch(0.55 0.18 30);
-  --chart-5: oklch(0.5 0.1 290);
+  --ink: #1a1215;
+  --ink-muted: #554b4f;
+  --ink-subtle: #8a8084;
 
-  --sidebar: oklch(0.97 0.004 250);
-  --sidebar-foreground: oklch(0.18 0.02 250);
-  --sidebar-primary: oklch(0.36 0.07 160);
-  --sidebar-primary-foreground: oklch(0.985 0.002 90);
-  --sidebar-accent: oklch(0.93 0.01 250);
-  --sidebar-accent-foreground: oklch(0.18 0.02 250);
-  --sidebar-border: oklch(0.9 0.006 250);
-  --sidebar-ring: oklch(0.36 0.07 160);
+  /* Charts: burgundy + gold + tonos cálidos */
+  --chart-1: #8b6262;
+  --chart-2: #d4a853;
+  --chart-3: #5c3d3d;
+  --chart-4: #c4a3a3;
+  --chart-5: #b08a3e;
+
+  --sidebar: #ffffff;
+  --sidebar-foreground: #1a1215;
+  --sidebar-primary: #8b6262;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f0eced;
+  --sidebar-accent-foreground: #3d2828;
+  --sidebar-border: #e0d8db;
+  --sidebar-ring: #8b6262;
 }
 
 .dark {
-  --background: oklch(0.13 0.02 250);
-  --foreground: oklch(0.97 0.005 90);
-  --surface: oklch(0.18 0.02 250);
-  --surface-muted: oklch(0.22 0.02 250);
-  --card: oklch(0.18 0.02 250);
-  --card-foreground: oklch(0.97 0.005 90);
-  --popover: oklch(0.18 0.02 250);
-  --popover-foreground: oklch(0.97 0.005 90);
-  --brand: oklch(0.6 0.1 160);
-  --brand-foreground: oklch(0.13 0.02 250);
-  --brand-soft: oklch(0.3 0.05 160);
-  --primary: oklch(0.6 0.1 160);
-  --primary-foreground: oklch(0.13 0.02 250);
-  --secondary: oklch(0.25 0.02 250);
-  --secondary-foreground: oklch(0.97 0.005 90);
-  --muted: oklch(0.25 0.02 250);
-  --muted-foreground: oklch(0.7 0.015 250);
-  --accent: oklch(0.3 0.04 75);
-  --accent-foreground: oklch(0.97 0.005 90);
-  --destructive: oklch(0.65 0.2 27);
-  --destructive-foreground: oklch(0.97 0.005 90);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 12%);
-  --ring: oklch(0.6 0.1 160);
-  --ink: oklch(0.97 0.005 90);
-  --ink-muted: oklch(0.7 0.015 250);
-  --ink-subtle: oklch(0.55 0.015 250);
-  --sidebar: oklch(0.16 0.02 250);
-  --sidebar-foreground: oklch(0.97 0.005 90);
-  --sidebar-primary: oklch(0.6 0.1 160);
-  --sidebar-primary-foreground: oklch(0.13 0.02 250);
-  --sidebar-accent: oklch(0.25 0.02 250);
-  --sidebar-accent-foreground: oklch(0.97 0.005 90);
-  --sidebar-border: oklch(1 0 0 / 8%);
-  --sidebar-ring: oklch(0.6 0.1 160);
+  /* Dark mode Moneta: fondos oscuros con acentos burgundy + gold */
+  --background: #1a1215;
+  --foreground: #faf7f5;
+  --surface: #231a1d;
+  --surface-muted: #2a2024;
+  --card: #231a1d;
+  --card-foreground: #faf7f5;
+  --popover: #231a1d;
+  --popover-foreground: #faf7f5;
+  --brand: #d4a853;
+  --brand-foreground: #1a1215;
+  --brand-soft: #3d2828;
+  --primary: #d4a853;
+  --primary-foreground: #1a1215;
+  --secondary: #2d2327;
+  --secondary-foreground: #faf7f5;
+  --muted: #2d2327;
+  --muted-foreground: #a69ca0;
+  --accent: #b08a3e;
+  --accent-foreground: #faf7f5;
+  --destructive: #e74c3c;
+  --destructive-foreground: #faf7f5;
+  --danger: #e74c3c;
+  --warning: #d4a853;
+  --success: #7ab36e;
+  --info: #8aa7c4;
+  --border: rgba(212, 168, 83, 0.15);
+  --input: rgba(212, 168, 83, 0.18);
+  --ring: #d4a853;
+  --ink: #faf7f5;
+  --ink-muted: #c4babd;
+  --ink-subtle: #8a8084;
+  --chart-1: #d4a853;
+  --chart-2: #c4a3a3;
+  --chart-3: #b08a3e;
+  --chart-4: #8b6262;
+  --chart-5: #e8c97a;
+  --sidebar: #1a1215;
+  --sidebar-foreground: #faf7f5;
+  --sidebar-primary: #d4a853;
+  --sidebar-primary-foreground: #1a1215;
+  --sidebar-accent: #2d2327;
+  --sidebar-accent-foreground: #faf7f5;
+  --sidebar-border: rgba(212, 168, 83, 0.1);
+  --sidebar-ring: #d4a853;
 }
 
 @layer base {

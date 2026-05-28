@@ -116,3 +116,28 @@ export function EmptyHint({ children }: { children: ReactNode }) {
     <div className="text-center py-10 text-[12px] text-ink-subtle">{children}</div>
   );
 }
+
+export function Modal({ 
+  isOpen, 
+  onClose, 
+  title, 
+  children 
+}: { 
+  isOpen: boolean; 
+  onClose: () => void; 
+  title: string; 
+  children: ReactNode 
+}) {
+  if (!isOpen) return null;
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm">
+      <div className="w-full max-w-md bg-surface rounded-xl shadow-lg ring-1 ring-border p-5">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-[14px] font-semibold">{title}</h2>
+          <button onClick={onClose} className="text-ink-subtle hover:text-ink transition-colors text-[16px] leading-none cursor-pointer">&times;</button>
+        </div>
+        {children}
+      </div>
+    </div>
+  );
+}

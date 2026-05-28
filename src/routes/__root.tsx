@@ -9,6 +9,9 @@ import {
 } from "@tanstack/react-router";
 
 import appCss from "../styles.css?url";
+import { AuthProvider } from "@/hooks/use-auth";
+import { PermissionsProvider } from "@/hooks/use-permissions";
+import { DialogProvider } from "@/components/app/dialog-provider";
 
 function NotFoundComponent() {
   return (
@@ -112,7 +115,13 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <Outlet />
+      <AuthProvider>
+        <PermissionsProvider>
+          <DialogProvider>
+            <Outlet />
+          </DialogProvider>
+        </PermissionsProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }
