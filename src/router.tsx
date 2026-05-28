@@ -25,12 +25,10 @@ export const getRouter = () => {
     context: { queryClient },
     scrollRestoration: true,
     defaultPreloadStaleTime: 0,
-    // 400ms antes de mostrar pending UI — navegaciones rápidas no
-    // muestran spinner (evita flash desagradable). Solo se muestra si
-    // el loader tarda >400ms.
-    defaultPendingMs: 400,
-    defaultPendingMinMs: 200,
-    defaultPendingComponent: GlobalPending,
+    // Sin pending component global — cada ruta gestiona su propio
+    // estado de carga (skeleton inline). El spinner global eterno
+    // sucedía cuando un loader nunca resolvía: la app quedaba
+    // bloqueada para siempre.
     defaultErrorComponent: ErrorComponent,
   });
 

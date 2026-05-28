@@ -16,27 +16,18 @@ export function PageShell({ title, subtitle, action, children }: PageShellProps)
   const navigate = useNavigate();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
+  // Redirect a /login si tras cargar no hay sesión. En SSR no se ejecuta,
+  // así que el HTML SSR tiene la página completa renderizada.
   useEffect(() => {
     if (!loading && !user && pathname !== "/login") {
       navigate({ to: "/login" });
     }
   }, [user, loading, navigate, pathname]);
 
-  // Loading inicial: solo la PRIMERA vez (cuando aún no se sabe nada).
-  // En navegaciones internas el user ya está cargado por el AuthProvider del root,
-  // así que esta rama no se ejecuta y no hay flash.
-  if (loading && !user) {
-    return (
-      <div className="min-h-screen grid place-items-center bg-background text-foreground">
-        <div className="text-[12px] text-ink-subtle">Cargando…</div>
-      </div>
-    );
-  }
-
-  if (!user) {
-    return null;
-  }
-
+  // Renderizamos la página SIEMPRE — sin bloquear por auth. Esto garantiza
+  // que el SSR devuelve HTML completo (sidebar + botones + contenido) y
+  // que el cliente siempre puede navegar aunque getSession() no resuelva.
+  // Si tras hidratar no hay sesión, el useEffect de arriba redirige a /login.
   return (
     <div className="min-h-screen flex bg-background text-foreground">
       <AppSidebar />
