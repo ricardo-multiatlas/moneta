@@ -32,6 +32,11 @@ _temp_*
 # Office lock files (Word/Excel crean estos al abrir un documento)
 ~$*
 
+# Comprimidos en docs (efímeros, no parte del repo)
+docs/*.rar
+docs/*.zip
+docs/*.7z
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
