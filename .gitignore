@@ -37,6 +37,12 @@ docs/*.rar
 docs/*.zip
 docs/*.7z
 
+# Logs locales de test
+_serverlog.txt
+_servererr.txt
+_log.txt
+_err.txt
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
