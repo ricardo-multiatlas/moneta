@@ -15,5 +15,8 @@
         "npm run build"
       ]
     }
+  },
+  "deploy": {
+    "startCommand": "node server-node.mjs"
   }
 }

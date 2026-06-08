@@ -1,0 +1,1 @@
+✓ Moneta server arrancado en http://0.0.0.0:4567
