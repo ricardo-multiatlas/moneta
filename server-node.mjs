@@ -109,6 +109,36 @@ const server = http.createServer(async (req, res) => {
     const url = new URL(req.url || "/", `http://${req.headers.host || "localhost"}`);
     const pathname = decodeURIComponent(url.pathname);
 
+    // Endpoint de diagnóstico: muestra qué env vars ve el server.
+    // NO expone valores, solo si están presentes y su longitud.
+    // Quitar después de resolver el deploy.
+    if (pathname === "/__debug") {
+      const envNames = [
+        "VITE_SUPABASE_URL", "VITE_SUPABASE_ANON_KEY",
+        "SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY",
+        "RESEND_API_KEY", "RESEND_FROM_EMAIL",
+        "GOOGLE_GENERATIVE_AI_API_KEY",
+        "PORT", "HOST", "NODE_ENV"
+      ];
+      const report = envNames.map((n) => ({
+        name: n,
+        present: !!process.env[n],
+        length: process.env[n]?.length ?? 0,
+        preview: process.env[n] ? process.env[n].slice(0, 8) + "…" : null,
+      }));
+      res.statusCode = 200;
+      res.setHeader("content-type", "application/json; charset=utf-8");
+      res.end(JSON.stringify({
+        node_version: process.version,
+        platform: process.platform,
+        cwd: process.cwd(),
+        env: report,
+        client_dir_exists: fs.existsSync(CLIENT_DIR),
+        server_entry_exists: fs.existsSync(SERVER_ENTRY),
+      }, null, 2));
+      return;
+    }
+
     // 1. Servir assets estáticos primero (rápido, sin pasar por SSR)
     if (pathname.startsWith("/assets/") || pathname.startsWith("/_build/")) {
       const filePath = path.join(CLIENT_DIR, pathname);
@@ -126,17 +156,26 @@ const server = http.createServer(async (req, res) => {
       }
     }
 
-    // 3. Para todo lo demás → SSR
+    // 3. Para todo lo demás → SSR. Log si la respuesta es 500 para diagnóstico.
     const request = await nodeReqToFetchRequest(req);
     const response = await handler.fetch(request, {}, {});
+    if (response.status >= 500) {
+      console.error(`[server] SSR devolvió ${response.status} para ${req.method} ${pathname}`);
+      const cloned = response.clone();
+      try {
+        const body = await cloned.text();
+        console.error(`[server] body 500: ${body.slice(0, 500)}`);
+      } catch {}
+    }
     await fetchResponseToNodeRes(response, res);
   } catch (err) {
-    console.error("[server] error procesando request:", err);
+    console.error("[server] EXCEPTION procesando request:", err);
+    console.error("[server] stack:", err?.stack);
     if (!res.headersSent) {
       res.statusCode = 500;
       res.setHeader("content-type", "text/html; charset=utf-8");
     }
-    res.end("<h1>500 · Error interno</h1><p>Revisa los logs del servidor.</p>");
+    res.end(`<h1>500 · Error interno</h1><pre>${String(err?.message || err).slice(0, 1000)}</pre>`);
   }
 });
 
