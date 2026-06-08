@@ -5,7 +5,7 @@
   "type": "module",
   "packageManager": "npm@10.9.5",
   "engines": {
-    "node": ">=20"
+    "node": ">=22"
   },
   "scripts": {
     "dev": "vite dev",
