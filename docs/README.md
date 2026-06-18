@@ -44,7 +44,7 @@
 
 ## Si vas a hacer un deploy desde cero a otro cliente
 
-La guía completa de deploy está en este chat de la sesión 2026-05-28 (ver el mensaje "Guía para que otra persona haga su propio deploy"). Próximo paso recomendado: convertirla en `docs/GUIA_DEPLOY.md`.
+👉 **[DEPLOY_RAILWAY.md](DEPLOY_RAILWAY.md)** · Guía completa de deploy en Railway, paso a paso. Variables de entorno, problemas conocidos (Node 22 + WebSocket), alternativas de hosting (Render, Fly.io, VPS), coste estimado. Probada y verificada el 2026-06-08.
 
 **Resumen rápido del stack que necesita el cliente final**:
 
