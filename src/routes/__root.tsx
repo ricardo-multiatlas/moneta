@@ -71,6 +71,67 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   );
 }
 
+const SITE_URL = "https://tanstack-start-app.makeflowia.workers.dev";
+const OG_IMAGE = `${SITE_URL}/moneta-logo.png`;
+
+const STRUCTURED_DATA = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": `${SITE_URL}/#provider`,
+      name: "MultiAtlas",
+      url: "https://multiatlas.net",
+      description: "Desarrollo de software a medida y SaaS para empresas en España.",
+    },
+    {
+      "@type": "Organization",
+      "@id": `${SITE_URL}/#cliente`,
+      name: "Moneta Seguros",
+      description: "Correduría de seguros con sede en Sevilla, España.",
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: "Sevilla",
+        addressCountry: "ES",
+      },
+    },
+    {
+      "@type": "SoftwareApplication",
+      "@id": `${SITE_URL}/#software`,
+      name: "Moneta · Correduría OS",
+      applicationCategory: "BusinessApplication",
+      operatingSystem: "Web",
+      description: "CRM + ERP a medida con IA para corredurías de seguros. Gestión de clientes, pólizas, vencimientos, comisiones, captación, facturación y comunicaciones.",
+      url: SITE_URL,
+      provider: { "@id": `${SITE_URL}/#provider` },
+      offers: {
+        "@type": "Offer",
+        price: "0",
+        priceCurrency: "EUR",
+      },
+      featureList: [
+        "Gestión de clientes con ficha 360°",
+        "Alta de pólizas por extracción IA desde PDF",
+        "Calendario de vencimientos con avisos automáticos",
+        "Conciliación automática de comisiones de aseguradoras",
+        "Pipeline de captación kanban",
+        "Constructor visual de reportes",
+        "Dashboard personalizable por usuario",
+        "Audit log de cambios con captura de IP",
+        "Multi-rol con Row Level Security",
+      ],
+    },
+    {
+      "@type": "WebSite",
+      "@id": `${SITE_URL}/#website`,
+      url: SITE_URL,
+      name: "Moneta · Correduría OS",
+      publisher: { "@id": `${SITE_URL}/#provider` },
+      inLanguage: "es-ES",
+    },
+  ],
+};
+
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   head: () => ({
     meta: [
@@ -79,10 +140,21 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { title: "Correduría OS · Moneta Seguros" },
       { name: "description", content: "CRM + ERP a medida con IA para corredurías de seguros. Clientes, pólizas, vencimientos, comisiones y facturación en un solo lugar." },
       { name: "author", content: "MultiAtlas" },
+      { name: "keywords", content: "correduría seguros, CRM seguros, ERP corredor, software corredor de seguros, gestión pólizas, comisiones aseguradoras, Sevilla, España" },
+      { property: "og:site_name", content: "Moneta · Correduría OS" },
       { property: "og:title", content: "Correduría OS · Moneta Seguros" },
       { property: "og:description", content: "El sistema interno que merece una correduría moderna en 2026." },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: SITE_URL },
+      { property: "og:image", content: OG_IMAGE },
+      { property: "og:image:width", content: "512" },
+      { property: "og:image:height", content: "512" },
+      { property: "og:image:alt", content: "Logo de Moneta · Correduría OS" },
+      { property: "og:locale", content: "es_ES" },
       { name: "twitter:card", content: "summary" },
+      { name: "twitter:title", content: "Correduría OS · Moneta Seguros" },
+      { name: "twitter:description", content: "CRM + ERP a medida con IA para corredurías de seguros." },
+      { name: "twitter:image", content: OG_IMAGE },
       { name: "theme-color", content: "#0f172a" },
       { name: "apple-mobile-web-app-capable", content: "yes" },
       { name: "apple-mobile-web-app-status-bar-style", content: "default" },
@@ -94,6 +166,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "icon", href: "/moneta-logo.png" },
       { rel: "manifest", href: "/manifest.webmanifest" },
       { rel: "apple-touch-icon", href: "/moneta-logo.png" },
+      { rel: "canonical", href: SITE_URL },
+    ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify(STRUCTURED_DATA),
+      },
     ],
   }),
   shellComponent: RootShell,

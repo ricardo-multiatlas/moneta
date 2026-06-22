@@ -5,7 +5,16 @@ import { useAuth } from "@/hooks/use-auth";
 
 export const Route = createFileRoute("/login")({
   component: LoginPage,
-  head: () => ({ meta: [{ title: "Acceso · Correduría OS" }] }),
+  head: () => ({
+    meta: [
+      { title: "Acceso · Correduría OS" },
+      { name: "description", content: "Acceso al sistema de gestión integral de Moneta Seguros. Plataforma interna para clientes, pólizas, vencimientos y comisiones." },
+      { property: "og:title", content: "Acceso · Correduría OS" },
+      { property: "og:description", content: "Login al CRM + ERP de Moneta Seguros." },
+      { property: "og:type", content: "website" },
+      { name: "robots", content: "noindex, nofollow" },
+    ],
+  }),
 });
 
 function LoginPage() {

@@ -1,2 +1,9 @@
 User-agent: *
 Allow: /
+Disallow: /login
+Disallow: /api/
+
+Sitemap: https://tanstack-start-app.makeflowia.workers.dev/sitemap.xml
+
+# AIO · llms.txt para asistentes IA (ChatGPT, Perplexity, Claude, etc.)
+# https://tanstack-start-app.makeflowia.workers.dev/llms.txt
