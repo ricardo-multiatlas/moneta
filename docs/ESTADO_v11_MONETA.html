@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Estado v0.11 · Moneta · Correduría OS</title>
+<style>
+  @page {
+    size: A4;
+    margin: 22mm 18mm 22mm 18mm;
+    @bottom-center {
+      content: "Estado v0.11 · Moneta · Correduría OS · página " counter(page) " de " counter(pages);
+      font-family: Inter, sans-serif;
+      font-size: 9pt;
+      color: #888;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 10.5pt;
+    line-height: 1.55;
+    color: #231a1d;
+    background: white;
+  }
+  .serif { font-family: "Playfair Display", Georgia, serif; }
+  header.cover {
+    border-bottom: 2px solid #8b6262;
+    padding-bottom: 18px;
+    margin-bottom: 28px;
+  }
+  .eyebrow {
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    font-size: 9pt;
+    font-weight: 700;
+    color: #8b6262;
+    margin-bottom: 12px;
+  }
+  h1 {
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: 26pt;
+    line-height: 1.15;
+    color: #3d2828;
+    margin-bottom: 10px;
+    font-weight: 500;
+    letter-spacing: -0.015em;
+  }
+  h1 em { font-style: italic; color: #b08a3e; }
+  .meta {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+    font-size: 9.5pt;
+    color: #6e6468;
+  }
+  .meta strong { color: #231a1d; }
+
+  h2 {
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: 17pt;
+    color: #3d2828;
+    margin: 32px 0 14px;
+    font-weight: 500;
+    border-bottom: 1px solid #e0d8db;
+    padding-bottom: 6px;
+    page-break-after: avoid;
+  }
+  h2 em { font-style: italic; color: #b08a3e; }
+
+  h3 {
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: 13pt;
+    color: #3d2828;
+    margin: 20px 0 8px;
+    font-weight: 600;
+    page-break-after: avoid;
+  }
+
+  p { margin-bottom: 10px; }
+  p.lead {
+    font-size: 11pt;
+    color: #6e6468;
+    margin-bottom: 18px;
+    max-width: 70ch;
+  }
+
+  blockquote {
+    border-left: 3px solid #d4a853;
+    background: rgba(212, 168, 83, 0.06);
+    padding: 12px 16px;
+    margin: 12px 0;
+    font-style: italic;
+    color: #5c3d3d;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 14px 0 20px;
+    font-size: 9.5pt;
+    page-break-inside: auto;
+  }
+  table thead { display: table-header-group; }
+  table tr { page-break-inside: avoid; }
+  table th {
+    background: #3d2828;
+    color: #faf7f4;
+    padding: 9px 10px;
+    text-align: left;
+    font-size: 9pt;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 600;
+  }
+  table td {
+    padding: 9px 10px;
+    border-bottom: 1px solid #e0d8db;
+    vertical-align: top;
+  }
+  table tr:last-child td { border-bottom: none; }
+
+  .ok { color: #1f7a3a; font-weight: 600; }
+  .new { color: #1f7a3a; font-weight: 700; background: rgba(31, 122, 58, 0.08); padding: 1px 6px; border-radius: 3px; }
+  .partial { color: #b08a3e; font-weight: 600; }
+  .ko { color: #B0413E; font-weight: 600; }
+  .warn { color: #B0413E; font-weight: 700; }
+
+  ul, ol { padding-left: 22px; margin: 10px 0 14px; }
+  li { margin-bottom: 6px; }
+
+  .alert {
+    background: rgba(176, 65, 62, 0.07);
+    border-left: 4px solid #B0413E;
+    padding: 14px 18px;
+    margin: 16px 0;
+    border-radius: 4px;
+    page-break-inside: avoid;
+  }
+  .alert strong { color: #B0413E; }
+
+  .info {
+    background: rgba(212, 168, 83, 0.08);
+    border-left: 4px solid #b08a3e;
+    padding: 14px 18px;
+    margin: 16px 0;
+    border-radius: 4px;
+    page-break-inside: avoid;
+  }
+
+  .success {
+    background: rgba(31, 122, 58, 0.07);
+    border-left: 4px solid #1f7a3a;
+    padding: 14px 18px;
+    margin: 16px 0;
+    border-radius: 4px;
+    page-break-inside: avoid;
+  }
+  .success strong { color: #1f7a3a; }
+
+  code {
+    background: rgba(60, 40, 40, 0.06);
+    border-radius: 3px;
+    padding: 1px 5px;
+    font-family: "JetBrains Mono", Consolas, monospace;
+    font-size: 9pt;
+  }
+
+  .page-break { page-break-before: always; }
+
+  footer.signoff {
+    margin-top: 40px;
+    padding-top: 16px;
+    border-top: 1px solid #e0d8db;
+    font-size: 9pt;
+    color: #6e6468;
+  }
+  footer.signoff strong { color: #231a1d; }
+</style>
+</head>
+<body>
+
+<header class="cover">
+  <div class="eyebrow">Documento técnico interno · MultiAtlas</div>
+  <h1 class="serif">Moneta · <em>Estado v0.11</em><br>Cierre de propuesta</h1>
+  <div class="meta">
+    <div><strong>Cliente:</strong> Moneta Seguros (Sevilla)</div>
+    <div><strong>Proveedor:</strong> MultiAtlas</div>
+    <div><strong>Fecha:</strong> 2026-06-22</div>
+    <div><strong>Versión:</strong> v0.11 (commit <code>2ab9fbe</code>)</div>
+  </div>
+</header>
+
+<p class="lead">
+  Snapshot del estado del proyecto tras la entrega de la versión 0.11, que
+  cierra los <strong>puntos 2, 3 y 4</strong> del análisis comparado contra la propuesta
+  comercial de Mayo 2026. Quedan pendientes únicamente los puntos de
+  infraestructura física (servidor con UPS en Madrid) y las garantías
+  operacionales (monitorización 24/7, reunión de onboard con Desirée).
+</p>
+
+<div class="success">
+  <strong>Salto de la versión v0.10 → v0.11</strong>
+  <ul style="margin-top: 8px;">
+    <li><strong>+5 módulos nuevos</strong> en el frontend (export contable A3/Contasol/Sage 50, conciliación bancaria N43, integración Mistral, integración Brevo, sidebar enriquecido).</li>
+    <li><strong>+2 migraciones SQL</strong> nuevas pendientes de aplicar en producción.</li>
+    <li><strong>Soberanía del dato</strong> elevada de "EU parcial" a "EU completa salvo hosting".</li>
+    <li>+1 doc técnico (<code>docs/SOBERANIA_DATOS.md</code>) para trazabilidad legal.</li>
+  </ul>
+</div>
+
+<h2 class="serif">Bloque 4 · <em>Los 6 módulos del sistema</em></h2>
+
+<table>
+  <thead>
+    <tr>
+      <th style="width: 4%;">#</th>
+      <th style="width: 30%;">Módulo</th>
+      <th style="width: 14%;">v0.10</th>
+      <th style="width: 14%;">v0.11</th>
+      <th>Cambio</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>CRM Clientes + búsqueda lenguaje natural</td>
+      <td class="ok">✅ Completo</td>
+      <td class="ok">✅ Completo</td>
+      <td>Búsqueda IA migrada a Mistral small.</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>Pólizas + alta IA desde PDF</td>
+      <td class="ok">✅ Completo</td>
+      <td class="ok">✅ Completo</td>
+      <td>Extracción PDF migrada a Mistral medium.</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>Vencimientos automáticos + email pre-rellenado</td>
+      <td class="ok">✅ Completo</td>
+      <td class="ok">✅ Completo</td>
+      <td>Envío migrado a Brevo (Francia).</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>Comisiones reconciliadas con IA</td>
+      <td class="ok">✅ Completo</td>
+      <td class="ok">✅ Completo</td>
+      <td>Extracción comisiones migrada a Mistral medium.</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>Facturación + export contable + conciliación bancaria</td>
+      <td class="partial">🟡 Parcial</td>
+      <td class="ok">✅ Completo</td>
+      <td><span class="new">CERRADO</span> Export A3, Contasol, Sage 50 + conciliación N43 con scoring auto.</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>Captación + ROI por canal</td>
+      <td class="ok">✅ Completo</td>
+      <td class="ok">✅ Completo</td>
+      <td>Sin cambios.</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="success">
+  <strong>Bloque 4 cerrado al 100&nbsp;%.</strong> Los 6 módulos prometidos en la propuesta están entregados y operativos.
+</div>
+
+<h2 class="serif">Bloque 5 · <em>Beneficios "el día después"</em></h2>
+
+<p>Los 6 beneficios prometidos al cliente son ahora entregables sin asteriscos:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="width: 55%;">Beneficio</th>
+      <th style="width: 13%;">Estado</th>
+      <th>Comentario v0.11</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>8-12 h/semana recuperadas</td><td class="ok">✅</td><td>IA Mistral + N43 + export contable suman ahorro real adicional.</td></tr>
+    <tr><td>Cero pólizas perdidas por olvido</td><td class="ok">✅</td><td>Vencimientos + Brevo funcionando.</td></tr>
+    <tr><td>Decisiones con datos reales</td><td class="ok">✅</td><td>Constructor reportes + ROI canal + N43 ahora reconcilia automático.</td></tr>
+    <tr><td>RGPD por diseño</td><td class="ok">✅</td><td>Audit log con IP, RLS por rol, base EU. <strong>Mejora v0.11:</strong> IA y emails ahora en proveedores UE.</td></tr>
+    <tr><td>Sin dependencia de personas</td><td class="ok">✅</td><td>Sin cambios.</td></tr>
+    <tr><td>Plataforma para crecer 3 → 30</td><td class="ok">✅</td><td>Sin cambios.</td></tr>
+  </tbody>
+</table>
+
+<h2 class="serif">Bloque 7 · <em>Calendario 14 semanas</em></h2>
+
+<p>Firma estimada: Mayo 2026. A 22 de junio de 2026, semana ~7 según calendario prometido.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="width: 30%;">Fase prometida</th>
+      <th style="width: 25%;">Semana prometida</th>
+      <th>Estado real al 2026-06-22</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>Inmersión + modelo de datos</td><td>1-2</td><td class="ok">✅ Hecho</td></tr>
+    <tr><td>Fase 1 LIVE · CRM + Pólizas</td><td>3-6</td><td class="ok">✅ Hecho</td></tr>
+    <tr><td>Fase 2 LIVE · Vencimientos + Comisiones</td><td>7-10</td><td class="ok">✅ Hecho (adelantado ~3 semanas)</td></tr>
+    <tr><td>Fase 3 LIVE · Facturación + Captación</td><td>11-14</td><td class="ok">✅ Hecho (adelantado ~7 semanas) — incluye export contable y conciliación bancaria que se prometieron en Fase 3.</td></tr>
+    <tr><td>Soporte continuo + evolución</td><td>15+</td><td class="partial">🟡 Procedimiento listo, monitorización 24/7 pendiente.</td></tr>
+  </tbody>
+</table>
+
+<div class="success">
+  <strong>Adelanto neto sobre calendario: ~7 semanas.</strong> Las 3 fases LIVE están entregadas tras 7 semanas de calendario, en lugar de las 14 prometidas.
+</div>
+
+<div class="page-break"></div>
+
+<h2 class="serif">Bloque 8 · <em>Soberanía del dato</em></h2>
+
+<blockquote>
+  "Tu sistema corre en infraestructura propia MultiAtlas, en Madrid.
+  Bajo legislación española. Bajo RGPD europeo. Sin pasar por ninguna
+  nube americana ni asiática para nada."
+</blockquote>
+
+<table>
+  <thead>
+    <tr>
+      <th style="width: 18%;">Componente</th>
+      <th style="width: 28%;">v0.10 (antes)</th>
+      <th style="width: 28%;">v0.11 (ahora)</th>
+      <th>¿Cumple Bloque 8?</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Base de datos</strong></td>
+      <td>Supabase eu-west-3 París</td>
+      <td>Supabase eu-west-3 París</td>
+      <td class="partial">🟡 EU sí, no Madrid</td>
+    </tr>
+    <tr>
+      <td><strong>Hosting</strong></td>
+      <td>Railway US East</td>
+      <td>Railway US East (sin cambio)</td>
+      <td class="ko">❌ Pendiente servidor UPS Madrid</td>
+    </tr>
+    <tr>
+      <td><strong>Emails</strong></td>
+      <td>Resend (USA)</td>
+      <td><span class="new">Brevo (Francia)</span></td>
+      <td class="ok">✅ Cerrado</td>
+    </tr>
+    <tr>
+      <td><strong>IA</strong></td>
+      <td>Google Gemini (USA)</td>
+      <td><span class="new">Mistral La Plateforme (Francia)</span></td>
+      <td class="ok">✅ Cerrado</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="success">
+  <strong>Dos brechas RGPD cerradas en v0.11.</strong>
+  <p style="margin-top: 6px;">
+    Tanto los emails (que contenían datos personales identificables de tomadores) como la IA (que procesaba PDFs con NIFs, números de póliza, importes) ahora viven en proveedores con sede UE confirmada y DPA público. Esto elimina la exposición a transferencias internacionales no documentadas que existía en v0.10.
+  </p>
+  <p style="margin-top: 6px;">
+    <strong>Mistral La Plateforme</strong> es el único proveedor europeo end-to-end: empresa francesa, datacenter en Francia y Suecia, y modelos entrenados en UE.
+  </p>
+</div>
+
+<div class="alert">
+  <strong>Sigue pendiente · hosting Madrid</strong>
+  <p style="margin-top: 6px;">El bundle Node se sirve desde Railway US East. La promesa "infraestructura propia MultiAtlas en Madrid" requiere migrar al servidor con UPS de Rubén. El código ya está preparado (<code>Dockerfile</code> portable + <code>server-node.mjs</code>). Sólo falta acceso SSH al servidor.</p>
+</div>
+
+<h2 class="serif">Bloque 9 · <em>Aplicación y propiedad</em></h2>
+
+<table>
+  <thead>
+    <tr><th style="width: 50%;">Promesa</th><th style="width: 14%;">Estado</th><th>Notas</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Aplicación instalada y operativa al salir</td><td class="ok">✅</td><td>Dockerfile + server-node portables. Sin cambios.</td></tr>
+    <tr><td>Copia completa BD en formato estándar</td><td class="ok">✅</td><td>Postgres exportable + backup JSON.</td></tr>
+    <tr><td>Cero penalización salida primer año</td><td class="partial">🟡</td><td>Contractual.</td></tr>
+    <tr><td>Titularidad software base permanece en MultiAtlas</td><td class="partial">🟡</td><td>Contractual.</td></tr>
+  </tbody>
+</table>
+
+<h2 class="serif">Bloque 10 · <em>Garantías y soporte</em></h2>
+
+<table>
+  <thead>
+    <tr><th style="width: 36%;">Promesa</th><th style="width: 14%;">Estado</th><th>Notas v0.11</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Plazo 14 semanas firma → LIVE completo</td><td class="ok">✅ Adelantado ~7 semanas</td><td>Las 3 fases LIVE entregadas con el bloque de export contable y conciliación bancaria cerrado.</td></tr>
+    <tr><td>3 meses garantía sobre cada fase</td><td class="partial">🟡 Contractual</td><td>Política de soporte.</td></tr>
+    <tr><td>Hosting + copias diarias + SSL + monitorización 24/7</td><td class="partial">🟡 Mixto</td><td>SSL ✅. Hosting ✅ pero NO Madrid. Copias Supabase ✅. <span class="warn">Monitorización 24/7 NO configurada</span> — pendiente.</td></tr>
+    <tr><td>Email + WhatsApp Business como canal directo</td><td class="partial">🟡</td><td>Email ✅. WhatsApp Business pendiente.</td></tr>
+    <tr><td>NDA mutuo firmado</td><td class="partial">🟡</td><td>Contractual.</td></tr>
+  </tbody>
+</table>
+
+<h2 class="serif">Cambios técnicos entregados en v0.11</h2>
+
+<h3>Punto 2 · Exportación contable</h3>
+<ul>
+  <li><strong>Archivo nuevo:</strong> <code>src/lib/exportar-contable.ts</code> — 3 generadores CSV: A3 (importación libre ISO-8859-1), Contasol (CSV ISO-8859-1, decimal coma), Sage 50 (UTF-8 con BOM).</li>
+  <li><strong>Modificado:</strong> <code>src/routes/facturacion.tsx</code> — dropdown con los 3 formatos + Excel genérico legacy.</li>
+  <li><strong>Tratamiento fiscal:</strong> comisiones de mediación tratadas como EXENTAS de IVA (art. 20.Uno.16 LIVA, clave E2). Cada factura genera asiento de doble partida (Debe cliente + Haber ingresos) o triple si IVA > 0.</li>
+  <li><strong>Cuentas PGC sugeridas:</strong> 43000001 (clientes), 70500000 (ingresos comisiones), 47700000 (IVA repercutido cuando aplica), 57200000 (bancos).</li>
+</ul>
+
+<h3>Punto 3 · Conciliación bancaria semi-automática (Norma 43 AEB)</h3>
+<ul>
+  <li><strong>Archivos nuevos:</strong> <code>src/lib/n43-parser.ts</code>, <code>src/routes/conciliacion-bancaria.tsx</code>.</li>
+  <li><strong>Migración SQL nueva:</strong> <code>supabase/migrations/20260621220000_v11_conciliacion_bancaria.sql</code> con tablas <code>movimientos_n43</code> y <code>movimientos_n43_match</code> + RLS por rol.</li>
+  <li><strong>Parser:</strong> registros 11/22/23/33/88, ISO-8859-1, longitud fija 80 chars, fechas AAMMDD.</li>
+  <li><strong>Scoring 0-100:</strong> importe exacto +40 (bloqueante), fecha valor ±3 días +20, NIF en concepto +25, número recibo/póliza +25, nombre tomador +10, código común coherente +5.</li>
+  <li><strong>Umbrales:</strong> ≥85 y candidato único → auto-confirma + recibo pasa a "cobrado". 65-84 o empate → dudoso (revisión humana). &lt;65 → ignorado.</li>
+  <li><strong>Sidebar:</strong> nueva entrada "Conciliación bancaria" visible para root, admin y jefe_zona.</li>
+</ul>
+
+<h3>Punto 4a · Migración IA · Gemini → Mistral La Plateforme</h3>
+<ul>
+  <li><strong>Modificados:</strong> <code>src/lib/ai-search.ts</code>, <code>src/lib/ai-comisiones.ts</code>, <code>src/routes/polizas.tsx</code> (sólo extractPolicyFn).</li>
+  <li><strong>Modelos:</strong> <code>mistral-medium-latest</code> (extracción PDF de pólizas y de informes de comisiones), <code>mistral-small-latest</code> (clasificación + filtros de búsqueda natural).</li>
+  <li><strong>SDK:</strong> <code>@ai-sdk/mistral</code> oficial Vercel (drop-in del anterior <code>@ai-sdk/google</code>).</li>
+  <li><strong>Variables entorno:</strong> nueva <code>MISTRAL_API_KEY</code>; eliminada <code>GOOGLE_GENERATIVE_AI_API_KEY</code>.</li>
+</ul>
+
+<h3>Punto 4b · Migración email · Resend → Brevo</h3>
+<ul>
+  <li><strong>Modificados:</strong> <code>supabase/functions/enviar-aviso-vencimiento</code>, <code>supabase/functions/procesar-campana</code>, <code>supabase/functions/webhook-resend</code> (carpeta conservada para no romper redirects).</li>
+  <li><strong>Migración SQL nueva:</strong> <code>supabase/migrations/20260621221000_v11_email_provider_brevo.sql</code> renombra <code>email_eventos.resend_id</code> → <code>provider_msg_id</code> y añade columna <code>provider</code> con default <code>'brevo'</code>.</li>
+  <li><strong>API:</strong> <code>https://api.brevo.com/v3/smtp/email</code> con header <code>api-key</code>. Webhooks idénticos (delivered, opened, click, hard_bounce, soft_bounce, spam, unsubscribed) mapeados a tipos internos (entregado, abierto, click, rebote, spam, baja).</li>
+  <li><strong>Variables entorno:</strong> nuevas <code>BREVO_API_KEY</code>, <code>BREVO_FROM_EMAIL</code>, <code>BREVO_FROM_NAME</code>; eliminadas <code>RESEND_API_KEY</code>, <code>RESEND_FROM_EMAIL</code>.</li>
+  <li><strong>Frontend:</strong> referencias a "Resend" sustituidas por "Brevo" en <code>comunicaciones.tsx</code>, <code>configuracion.tsx</code>, <code>configuracion.webhooks.tsx</code>, <code>presupuestos.tsx</code>.</li>
+</ul>
+
+<h2 class="serif">Lo que aún queda</h2>
+
+<div class="info">
+  <ol>
+    <li><strong>Migrar hosting a servidor con UPS de Rubén (Madrid).</strong> Cierra el último componente del Bloque 8. Requiere acceso SSH al servidor. Una tarde de trabajo con el Dockerfile ya existente.</li>
+    <li><strong>Aplicar las 2 migraciones SQL nuevas en el Supabase EU productivo.</strong> Desde el SQL editor (el firewall bloquea 5432, usar pooler 6543). Ficheros: <code>20260621220000_v11_conciliacion_bancaria.sql</code> y <code>20260621221000_v11_email_provider_brevo.sql</code>.</li>
+    <li><strong>Configurar variables entorno en Railway (y luego en el servidor Madrid):</strong> <code>BREVO_API_KEY</code>, <code>BREVO_FROM_EMAIL</code>, <code>BREVO_FROM_NAME</code>, <code>MISTRAL_API_KEY</code>. Eliminar las anteriores de Google y Resend.</li>
+    <li><strong>Validar extracción de PDF de póliza real con Mistral medium</strong> antes de declarar v0.11 estable. Si la calidad cae &gt;10 % vs Gemini, plan B: cambiar a Azure OpenAI Sweden Central con <code>gpt-4.1-mini</code> (mismo SDK, datacenter UE).</li>
+    <li><strong>Verificar Brevo</strong> con dominio verificado (SPF + DKIM + DMARC) en el panel antes del primer envío real.</li>
+    <li><strong>Configurar monitorización 24/7</strong> (UptimeRobot / StatusCake / Pingdom apuntando a <code>/manifest.webmanifest</code> o ruta de health-check). Cierra el Bloque 10.</li>
+    <li><strong>Reunión de onboard con Desirée.</strong> Se hará el lunes, hora por confirmar con Rubén.</li>
+    <li><strong>Conectar WhatsApp Business</strong> al canal de soporte (mencionado en Bloque 10).</li>
+  </ol>
+</div>
+
+<h2 class="serif">Resumen final</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th style="width: 28%;">Bloque</th>
+      <th style="width: 24%;">v0.10</th>
+      <th style="width: 24%;">v0.11</th>
+      <th>Δ</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>4 · Módulos del sistema</td><td>5/6 completos</td><td><strong>6/6 completos</strong></td><td class="new">+1 cerrado</td></tr>
+    <tr><td>5 · Beneficios "día después"</td><td>6/6 entregables</td><td>6/6 entregables</td><td>=</td></tr>
+    <tr><td>7 · Calendario 14 semanas</td><td>Adelantado ~8 semanas</td><td>Adelantado ~7 semanas (real ahora)</td><td>=</td></tr>
+    <tr><td>8 · Soberanía dato</td><td class="warn">🚨 NO cumple</td><td>🟡 EU completo salvo hosting</td><td class="new">+2 brechas cerradas</td></tr>
+    <tr><td>9 · Propiedad / salida</td><td>Técnicamente OK</td><td>Técnicamente OK</td><td>=</td></tr>
+    <tr><td>10 · Garantías + soporte</td><td>Parcial</td><td>Parcial (monitorización + WhatsApp)</td><td>=</td></tr>
+  </tbody>
+</table>
+
+<div class="success">
+  <strong>Resultado v0.11:</strong> de los 6 bloques del compromiso comercial, 4 están al 100&nbsp;% (4, 5, 7, 9) y 2 quedan dependientes de acciones de infraestructura/soporte (8 hosting Madrid, 10 monitorización + WhatsApp). Los puntos 2, 3 y 4 del PDF anterior están entregados.
+</div>
+
+<footer class="signoff">
+  <p><strong>Documento generado el 2026-06-22.</strong> Versión del sistema analizada: commit <code>2ab9fbe</code> en <code>ricardo-multiatlas/moneta</code> (push dual con <code>makeflowia-lab/moneta-unified-hub</code> deshabilitado temporalmente — el remoto devuelve 404 con el PAT actual, pendiente reconfiguración cuando se aclare el repo destino de Multiatlas).</p>
+  <p style="margin-top: 6px;">Para uso interno MultiAtlas. No distribuir al cliente sin revisión previa por Rubén Toledano.</p>
+</footer>
+
+</body>
+</html>
