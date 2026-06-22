@@ -1,16 +1,22 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
-import { Plus, FileDown } from "lucide-react";
+import { Plus, FileDown, ChevronDown } from "lucide-react";
 import { z } from "zod";
 import { PageShell } from "@/components/app/page-shell";
 import { Card, KpiCard, MoneyEUR, SectionHeader, StatusBadge, Modal } from "@/components/app/ui-bits";
 import { supabase } from "@/lib/supabase";
 import { exportarExcel } from "@/lib/exportar";
+import {
+  exportarFacturasA3,
+  exportarFacturasContasol,
+  exportarFacturasSage50,
+  type FacturaContable,
+} from "@/lib/exportar-contable";
 import { generarFichaPDF, descargarBlob, imprimirBlob } from "@/lib/generic-pdf";
 import { RowActions } from "@/components/app/row-actions";
 import { DetailModal } from "@/components/app/detail-modal";
 import { Paginador } from "@/components/app/paginador";
 import { useDialog } from "@/components/app/dialog-provider";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const searchSchema = z.object({
   page: z.coerce.number().int().positive().default(1).catch(1),
@@ -110,34 +116,104 @@ function FacturacionPage() {
   const descargarFactura = (f: any) => descargarBlob(buildFacturaPDF(f), `factura_${f.numero}.pdf`);
   const imprimirFactura = (f: any) => imprimirBlob(buildFacturaPDF(f));
 
-  const exportarA3 = () => {
+  const [exportMenuOpen, setExportMenuOpen] = useState(false);
+  const exportMenuRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!exportMenuOpen) return;
+    const onClick = (e: MouseEvent) => {
+      if (exportMenuRef.current && !exportMenuRef.current.contains(e.target as Node)) {
+        setExportMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", onClick);
+    return () => document.removeEventListener("mousedown", onClick);
+  }, [exportMenuOpen]);
+
+  /**
+   * Convierte una fecha que llega como locale string (toLocaleDateString) a ISO yyyy-mm-dd.
+   * Devuelve cadena vacía si no es parseable.
+   */
+  const toIsoDate = (s: string): string => {
+    if (!s) return "";
+    // dd/mm/yyyy o d/m/yyyy
+    const m = s.match(/^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{4})$/);
+    if (m) {
+      const [, d, mo, y] = m;
+      return `${y}-${mo.padStart(2, "0")}-${d.padStart(2, "0")}`;
+    }
+    const t = Date.parse(s);
+    if (!isNaN(t)) return new Date(t).toISOString().slice(0, 10);
+    return "";
+  };
+
+  /**
+   * Construye los registros FacturaContable a partir de las facturas cargadas.
+   * En correduría la comisión de mediación está EXENTA de IVA (art. 20.Uno.16 LIVA),
+   * por lo que tipoIva = 0, cuotaIva = 0 y total = base.
+   */
+  const buildFacturasContables = (): FacturaContable[] => {
+    return facturas.map((f: any): FacturaContable => {
+      const total = Number(f.importe || 0);
+      return {
+        numero: String(f.numero || ""),
+        fecha: toIsoDate(f.fechaEmision) || new Date().toISOString().slice(0, 10),
+        nif: "",
+        nombre: String(f.cliente || ""),
+        base: total,
+        tipoIva: 0,
+        cuotaIva: 0,
+        total,
+        concepto: f.concepto ? String(f.concepto) : `FRA ${f.numero}`,
+      };
+    });
+  };
+
+  const descargarCSV = (blob: Blob, filename: string) => {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  const handleExport = (formato: "a3" | "contasol" | "sage50" | "excel") => {
+    setExportMenuOpen(false);
     if (facturas.length === 0) {
       toast("No hay facturas para exportar.", "warning");
       return;
     }
-    // Asiento contable estilo A3/Contasol/Sage
-    const rows = facturas.map((f: any) => {
-      const total = Number(f.importe || 0);
-      const base = +(total / 1.21).toFixed(2);
-      const cuota = +(total - base).toFixed(2);
-      return {
-        Fecha: f.fechaEmision,
-        Numero: f.numero,
-        Cliente: f.cliente,
-        Concepto: f.concepto,
-        Base: base,
-        "IVA%": 21,
-        Cuota_IVA: cuota,
-        Total: total,
-        Cuenta_Cliente: "430000",
-        Cuenta_Venta: "705000",
-      };
-    });
-    exportarExcel(
-      `facturas_a3_${new Date().toISOString().slice(0, 10)}.xlsx`,
-      "Facturas",
-      rows
-    );
+    const stamp = new Date().toISOString().slice(0, 10);
+    if (formato === "excel") {
+      const rows = facturas.map((f: any) => {
+        const total = Number(f.importe || 0);
+        return {
+          Fecha: f.fechaEmision,
+          Numero: f.numero,
+          Cliente: f.cliente,
+          Concepto: f.concepto,
+          Base: total,
+          "IVA%": 0,
+          Cuota_IVA: 0,
+          Total: total,
+          Cuenta_Cliente: "43000001",
+          Cuenta_Venta: "70500000",
+        };
+      });
+      exportarExcel(`facturas_${stamp}.xlsx`, "Facturas", rows);
+      return;
+    }
+    const items = buildFacturasContables();
+    if (formato === "a3") {
+      descargarCSV(exportarFacturasA3(items), `facturas_a3_${stamp}.csv`);
+    } else if (formato === "contasol") {
+      descargarCSV(exportarFacturasContasol(items), `facturas_contasol_${stamp}.csv`);
+    } else if (formato === "sage50") {
+      descargarCSV(exportarFacturasSage50(items), `facturas_sage50_${stamp}.csv`);
+    }
   };
 
   const emitido = facturas.filter((f: any) => f.estado === "Emitida" || f.estado === "Pagada").reduce((s: any, f: any) => s + f.importe, 0);
@@ -200,9 +276,25 @@ function FacturacionPage() {
       subtitle="Emisión de minutas y facturas conectadas a las pólizas firmadas. Exportación a A3, Contasol o Sage."
       action={
         <div className="flex items-center gap-2">
-          <button type="button" onClick={exportarA3} className="text-[12px] font-medium py-1.5 px-2.5 rounded-md ring-1 ring-border hover:bg-secondary flex items-center gap-1.5 cursor-pointer">
-            <FileDown className="size-3.5" /> Exportar A3 / Contasol
-          </button>
+          <div className="relative" ref={exportMenuRef}>
+            <button
+              type="button"
+              onClick={() => setExportMenuOpen(o => !o)}
+              className="text-[12px] font-medium py-1.5 px-2.5 rounded-md ring-1 ring-border hover:bg-secondary flex items-center gap-1.5 cursor-pointer"
+            >
+              <FileDown className="size-3.5" /> Exportar contabilidad
+              <ChevronDown className="size-3" />
+            </button>
+            {exportMenuOpen && (
+              <div className="absolute right-0 mt-1 w-56 rounded-md border border-border bg-popover shadow-lg z-50 py-1 text-[12px]">
+                <button type="button" onClick={() => handleExport("a3")} className="w-full text-left px-3 py-1.5 hover:bg-secondary cursor-pointer">A3 (CSV)</button>
+                <button type="button" onClick={() => handleExport("contasol")} className="w-full text-left px-3 py-1.5 hover:bg-secondary cursor-pointer">Contasol (CSV)</button>
+                <button type="button" onClick={() => handleExport("sage50")} className="w-full text-left px-3 py-1.5 hover:bg-secondary cursor-pointer">Sage 50 (CSV)</button>
+                <div className="my-1 border-t border-border" />
+                <button type="button" onClick={() => handleExport("excel")} className="w-full text-left px-3 py-1.5 hover:bg-secondary cursor-pointer">Excel genérico</button>
+              </div>
+            )}
+          </div>
           <button onClick={() => setIsModalOpen(true)} className="text-[12px] font-medium py-1.5 px-3 rounded-md bg-brand text-brand-foreground hover:brightness-110 flex items-center gap-1.5 cursor-pointer">
             <Plus className="size-3.5" /> Nueva factura
           </button>

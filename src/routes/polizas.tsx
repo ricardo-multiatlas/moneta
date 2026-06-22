@@ -11,7 +11,7 @@ import { Paginador } from "@/components/app/paginador";
 import { useDialog } from "@/components/app/dialog-provider";
 import { createServerFn } from "@tanstack/react-start";
 import { generateObject } from "ai";
-import { google } from "@ai-sdk/google";
+import { mistral } from "@ai-sdk/mistral";
 import { z } from "zod";
 import { useState, useRef, useEffect } from "react";
 
@@ -20,8 +20,11 @@ export const extractPolicyFn = createServerFn({ method: "POST" })
   .inputValidator((d: { pdfBase64: string }) => d)
   .handler(async ({ data }) => {
     try {
+      if (!process.env.MISTRAL_API_KEY) {
+        return { success: false as const, error: "MISTRAL_API_KEY no configurada — IA deshabilitada temporalmente" };
+      }
       const result = await generateObject({
-        model: google("gemini-1.5-flash"),
+        model: mistral("mistral-medium-latest"),
         schema: z.object({
           numero_poliza: z.string().describe("Número identificador de la póliza"),
           aseguradora: z.string().describe("Nombre de la compañía aseguradora (ej. Mapfre, Allianz)"),
@@ -32,6 +35,10 @@ export const extractPolicyFn = createServerFn({ method: "POST" })
           cliente_nif: z.string().describe("NIF/CIF del Tomador"),
         }),
         messages: [
+          {
+            role: "system",
+            content: "Responde en espanol. La respuesta debe ser un JSON valido segun el schema indicado.",
+          },
           {
             role: "user",
             content: [

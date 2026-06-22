@@ -26,6 +26,7 @@ import { Route as FacturacionRouteImport } from './routes/facturacion'
 import { Route as EquipoRouteImport } from './routes/equipo'
 import { Route as DashboardZonaRouteImport } from './routes/dashboard-zona'
 import { Route as ConfiguracionRouteImport } from './routes/configuracion'
+import { Route as ConciliacionBancariaRouteImport } from './routes/conciliacion-bancaria'
 import { Route as ComunicacionesRouteImport } from './routes/comunicaciones'
 import { Route as ComisionesRouteImport } from './routes/comisiones'
 import { Route as ClientesRouteImport } from './routes/clientes'
@@ -132,6 +133,11 @@ const DashboardZonaRoute = DashboardZonaRouteImport.update({
 const ConfiguracionRoute = ConfiguracionRouteImport.update({
   id: '/configuracion',
   path: '/configuracion',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConciliacionBancariaRoute = ConciliacionBancariaRouteImport.update({
+  id: '/conciliacion-bancaria',
+  path: '/conciliacion-bancaria',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ComunicacionesRoute = ComunicacionesRouteImport.update({
@@ -255,6 +261,7 @@ export interface FileRoutesByFullPath {
   '/clientes': typeof ClientesRouteWithChildren
   '/comisiones': typeof ComisionesRoute
   '/comunicaciones': typeof ComunicacionesRoute
+  '/conciliacion-bancaria': typeof ConciliacionBancariaRoute
   '/configuracion': typeof ConfiguracionRouteWithChildren
   '/dashboard-zona': typeof DashboardZonaRoute
   '/equipo': typeof EquipoRoute
@@ -296,6 +303,7 @@ export interface FileRoutesByTo {
   '/clientes': typeof ClientesRouteWithChildren
   '/comisiones': typeof ComisionesRoute
   '/comunicaciones': typeof ComunicacionesRoute
+  '/conciliacion-bancaria': typeof ConciliacionBancariaRoute
   '/configuracion': typeof ConfiguracionRouteWithChildren
   '/dashboard-zona': typeof DashboardZonaRoute
   '/equipo': typeof EquipoRoute
@@ -338,6 +346,7 @@ export interface FileRoutesById {
   '/clientes': typeof ClientesRouteWithChildren
   '/comisiones': typeof ComisionesRoute
   '/comunicaciones': typeof ComunicacionesRoute
+  '/conciliacion-bancaria': typeof ConciliacionBancariaRoute
   '/configuracion': typeof ConfiguracionRouteWithChildren
   '/dashboard-zona': typeof DashboardZonaRoute
   '/equipo': typeof EquipoRoute
@@ -381,6 +390,7 @@ export interface FileRouteTypes {
     | '/clientes'
     | '/comisiones'
     | '/comunicaciones'
+    | '/conciliacion-bancaria'
     | '/configuracion'
     | '/dashboard-zona'
     | '/equipo'
@@ -422,6 +432,7 @@ export interface FileRouteTypes {
     | '/clientes'
     | '/comisiones'
     | '/comunicaciones'
+    | '/conciliacion-bancaria'
     | '/configuracion'
     | '/dashboard-zona'
     | '/equipo'
@@ -463,6 +474,7 @@ export interface FileRouteTypes {
     | '/clientes'
     | '/comisiones'
     | '/comunicaciones'
+    | '/conciliacion-bancaria'
     | '/configuracion'
     | '/dashboard-zona'
     | '/equipo'
@@ -505,6 +517,7 @@ export interface RootRouteChildren {
   ClientesRoute: typeof ClientesRouteWithChildren
   ComisionesRoute: typeof ComisionesRoute
   ComunicacionesRoute: typeof ComunicacionesRoute
+  ConciliacionBancariaRoute: typeof ConciliacionBancariaRoute
   ConfiguracionRoute: typeof ConfiguracionRouteWithChildren
   DashboardZonaRoute: typeof DashboardZonaRoute
   EquipoRoute: typeof EquipoRoute
@@ -643,6 +656,13 @@ declare module '@tanstack/react-router' {
       path: '/configuracion'
       fullPath: '/configuracion'
       preLoaderRoute: typeof ConfiguracionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/conciliacion-bancaria': {
+      id: '/conciliacion-bancaria'
+      path: '/conciliacion-bancaria'
+      fullPath: '/conciliacion-bancaria'
+      preLoaderRoute: typeof ConciliacionBancariaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/comunicaciones': {
@@ -898,6 +918,7 @@ const rootRouteChildren: RootRouteChildren = {
   ClientesRoute: ClientesRouteWithChildren,
   ComisionesRoute: ComisionesRoute,
   ComunicacionesRoute: ComunicacionesRoute,
+  ConciliacionBancariaRoute: ConciliacionBancariaRoute,
   ConfiguracionRoute: ConfiguracionRouteWithChildren,
   DashboardZonaRoute: DashboardZonaRoute,
   EquipoRoute: EquipoRoute,

@@ -254,7 +254,7 @@ function ComunicacionesPage() {
             <div>
               <label className="block text-[11px] font-medium text-ink-subtle mb-1">Canal</label>
               <select title="Canal" value={camp.tipo} onChange={e => setCamp({ ...camp, tipo: e.target.value })} className="w-full bg-secondary border-0 rounded px-3 py-2 text-[12px] ring-1 ring-border focus:ring-brand/30 outline-none">
-                <option value="email">Email (Resend)</option>
+                <option value="email">Email (Brevo)</option>
                 <option value="sms">SMS (proveedor pendiente)</option>
                 <option value="whatsapp">WhatsApp Business (proveedor pendiente)</option>
               </select>

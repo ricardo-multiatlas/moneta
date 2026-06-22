@@ -1,6 +1,9 @@
 // Edge Function: enviar-aviso-vencimiento
 // Despliegue:  supabase functions deploy enviar-aviso-vencimiento --no-verify-jwt
-// Secret:      supabase secrets set RESEND_API_KEY=re_xxx
+// Secrets:
+//   supabase secrets set BREVO_API_KEY=xkeysib-xxx
+//   supabase secrets set BREVO_FROM_EMAIL=avisos@moneta.es
+//   supabase secrets set BREVO_FROM_NAME="Moneta Seguros"
 //
 // Llamada desde el frontend (vía supabase.functions.invoke):
 //   supabase.functions.invoke("enviar-aviso-vencimiento", {
@@ -8,6 +11,9 @@
 //   })
 //
 // Funciona para registros individuales o lotes (pasando ids: [...]).
+//
+// Proveedor: Brevo (Francia, UE) — sustituye a Resend (USA) para cumplir
+// la promesa "datos en UE" del Bloque 8 de la propuesta.
 
 // @ts-expect-error - Deno standard lib (no resuelve en TypeScript Node, sí en Edge runtime)
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
@@ -15,13 +21,15 @@ import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 // @ts-expect-error - Deno global en Edge runtime
-const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
+const BREVO_API_KEY = Deno.env.get("BREVO_API_KEY");
 // @ts-expect-error - Deno global en Edge runtime
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
 // @ts-expect-error - Deno global en Edge runtime
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
 // @ts-expect-error - Deno global en Edge runtime
-const FROM_EMAIL = Deno.env.get("RESEND_FROM_EMAIL") || "onboarding@resend.dev";
+const FROM_EMAIL = Deno.env.get("BREVO_FROM_EMAIL") || "avisos@moneta.es";
+// @ts-expect-error - Deno global en Edge runtime
+const FROM_NAME = Deno.env.get("BREVO_FROM_NAME") || "Moneta Seguros";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -86,27 +94,53 @@ function htmlAvisoVencimiento(v: VencimientoRow): string {
 </body></html>`;
 }
 
-async function enviarEmail(to: string, subject: string, html: string) {
-  const res = await fetch("https://api.resend.com/emails", {
+function textAvisoVencimiento(v: VencimientoRow): string {
+  const cliente = v.polizas.clientes.nombre_razon_social;
+  const ramo = v.polizas.ramo;
+  const num = v.polizas.numero_poliza;
+  const aseg = v.polizas.aseguradora;
+  const fecha = new Date(v.fecha_vencimiento).toLocaleDateString("es-ES");
+  return `Hola ${cliente},\n\nTu póliza de ${ramo} con ${aseg} (nº ${num}) vence el ${fecha}.\nSi quieres renovarla igual, no hace falta hacer nada. Si quieres revisar precio o coberturas, contesta a este email.\n\nEquipo Moneta Seguros · 954 00 00 00`;
+}
+
+async function enviarEmail(
+  toEmail: string,
+  toName: string,
+  subject: string,
+  html: string,
+  text: string,
+  metadata: Record<string, string>
+): Promise<{ messageId: string }> {
+  const res = await fetch("https://api.brevo.com/v3/smtp/email", {
     method: "POST",
     headers: {
-      Authorization: `Bearer ${RESEND_API_KEY}`,
+      "api-key": BREVO_API_KEY!,
       "Content-Type": "application/json",
+      "accept": "application/json",
     },
-    body: JSON.stringify({ from: FROM_EMAIL, to, subject, html }),
+    body: JSON.stringify({
+      sender: { email: FROM_EMAIL, name: FROM_NAME },
+      to: [{ email: toEmail, name: toName || toEmail }],
+      subject,
+      htmlContent: html,
+      textContent: text,
+      tags: ["aviso-vencimiento"],
+      headers: { "X-Mailin-custom": JSON.stringify(metadata) },
+    }),
   });
   if (!res.ok) {
     const txt = await res.text();
-    throw new Error(`Resend ${res.status}: ${txt}`);
+    throw new Error(`Brevo ${res.status}: ${txt}`);
   }
-  return await res.json();
+  const body = (await res.json()) as { messageId: string };
+  return { messageId: body.messageId };
 }
 
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
-  if (!RESEND_API_KEY) {
-    return new Response(JSON.stringify({ error: "RESEND_API_KEY no configurado" }), {
+  if (!BREVO_API_KEY) {
+    return new Response(JSON.stringify({ error: "BREVO_API_KEY no configurado" }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
@@ -141,7 +175,7 @@ serve(async (req) => {
     });
   }
 
-  const resultados: Array<{ id: string; ok: boolean; detalle?: string }> = [];
+  const resultados: Array<{ id: string; ok: boolean; detalle?: string; provider_msg_id?: string }> = [];
 
   for (const row of (data || []) as unknown as VencimientoRow[]) {
     const email = row.polizas?.clientes?.email;
@@ -150,10 +184,13 @@ serve(async (req) => {
       continue;
     }
     try {
-      await enviarEmail(
+      const sendRes = await enviarEmail(
         email,
+        row.polizas.clientes.nombre_razon_social || "",
         `Tu póliza de ${row.polizas.ramo} vence el ${new Date(row.fecha_vencimiento).toLocaleDateString("es-ES")}`,
-        htmlAvisoVencimiento(row)
+        htmlAvisoVencimiento(row),
+        textAvisoVencimiento(row),
+        { vencimiento_id: row.id, kind: "aviso-vencimiento" }
       );
       await sb.from("vencimientos").update({ estado: "avisado" }).eq("id", row.id);
       await sb.from("comunicaciones").insert({
@@ -161,10 +198,10 @@ serve(async (req) => {
         poliza_id: null,
         tipo: "email",
         asunto: `Aviso de vencimiento - póliza ${row.polizas.numero_poliza}`,
-        contenido: `Email enviado a ${email} sobre vencimiento del ${row.fecha_vencimiento}.`,
+        contenido: `Email enviado a ${email} sobre vencimiento del ${row.fecha_vencimiento}. provider_msg_id=${sendRes.messageId}`,
         fecha: new Date().toISOString(),
       });
-      resultados.push({ id: row.id, ok: true });
+      resultados.push({ id: row.id, ok: true, provider_msg_id: sendRes.messageId });
     } catch (e) {
       resultados.push({ id: row.id, ok: false, detalle: (e as Error).message });
     }

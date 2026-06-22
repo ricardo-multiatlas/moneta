@@ -1,9 +1,15 @@
 // Edge Function: procesar-campana
 // Despliegue:  supabase functions deploy procesar-campana --no-verify-jwt
-// Secret:      supabase secrets set RESEND_API_KEY=re_xxx
+// Secrets:
+//   supabase secrets set BREVO_API_KEY=xkeysib-xxx
+//   supabase secrets set BREVO_FROM_EMAIL=avisos@moneta.es
+//   supabase secrets set BREVO_FROM_NAME="Moneta Seguros"
 //
 // Llamada desde frontend (vía supabase.functions.invoke):
 //   supabase.functions.invoke("procesar-campana", { body: { campana_id: "uuid" } })
+//
+// Proveedor: Brevo (Francia, UE) — sustituye a Resend (USA) para cumplir
+// la promesa "datos en UE" del Bloque 8 de la propuesta.
 
 // @ts-expect-error - Deno standard lib
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
@@ -11,13 +17,15 @@ import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 // @ts-expect-error - Deno global
-const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
+const BREVO_API_KEY = Deno.env.get("BREVO_API_KEY");
 // @ts-expect-error - Deno global
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
 // @ts-expect-error - Deno global
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
 // @ts-expect-error - Deno global
-const FROM_EMAIL = Deno.env.get("RESEND_FROM_EMAIL") || "onboarding@resend.dev";
+const FROM_EMAIL = Deno.env.get("BREVO_FROM_EMAIL") || "avisos@moneta.es";
+// @ts-expect-error - Deno global
+const FROM_NAME = Deno.env.get("BREVO_FROM_NAME") || "Moneta Seguros";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -35,33 +43,51 @@ function reemplazarPlaceholders(texto: string, cliente: any): string {
     .replaceAll("{{email}}", cliente.email || "");
 }
 
-async function enviarEmailResend(to: string, subject: string, html: string, tags: Record<string, string>) {
-  const res = await fetch("https://api.resend.com/emails", {
+function htmlToText(html: string): string {
+  return html
+    .replace(/<br\s*\/?>/gi, "\n")
+    .replace(/<\/p>/gi, "\n\n")
+    .replace(/<[^>]+>/g, "")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
+
+async function enviarEmailBrevo(
+  toEmail: string,
+  toName: string,
+  subject: string,
+  html: string,
+  metadata: Record<string, string>
+): Promise<{ messageId: string }> {
+  const res = await fetch("https://api.brevo.com/v3/smtp/email", {
     method: "POST",
     headers: {
-      Authorization: `Bearer ${RESEND_API_KEY}`,
+      "api-key": BREVO_API_KEY!,
       "Content-Type": "application/json",
+      "accept": "application/json",
     },
     body: JSON.stringify({
-      from: FROM_EMAIL,
-      to,
+      sender: { email: FROM_EMAIL, name: FROM_NAME },
+      to: [{ email: toEmail, name: toName || toEmail }],
       subject,
-      html,
-      tags: Object.entries(tags).map(([name, value]) => ({ name, value })),
+      htmlContent: html,
+      textContent: htmlToText(html),
+      tags: ["campana", `campana:${metadata.campana_id ?? ""}`],
+      headers: { "X-Mailin-custom": JSON.stringify(metadata) },
     }),
   });
   if (!res.ok) {
     const txt = await res.text();
-    throw new Error(`Resend ${res.status}: ${txt}`);
+    throw new Error(`Brevo ${res.status}: ${txt}`);
   }
-  return (await res.json()) as { id: string };
+  return (await res.json()) as { messageId: string };
 }
 
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
-  if (!RESEND_API_KEY) {
-    return new Response(JSON.stringify({ error: "RESEND_API_KEY no configurado" }), {
+  if (!BREVO_API_KEY) {
+    return new Response(JSON.stringify({ error: "BREVO_API_KEY no configurado" }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
@@ -118,6 +144,8 @@ serve(async (req) => {
   let ok = 0;
   let fail = 0;
 
+  // Envío uno-a-uno (mantenemos patrón existente — Brevo cobra por destinatario,
+  // no por request, y así conservamos el provider_msg_id individual por envío).
   for (const cliente of destinatarios || []) {
     if (!cliente.email) continue;
 
@@ -141,13 +169,16 @@ serve(async (req) => {
     try {
       const subject = reemplazarPlaceholders(campana.asunto || campana.nombre, cliente);
       const html = `<!doctype html><html><body style="font-family:system-ui,sans-serif;line-height:1.55;color:#222;padding:20px">${reemplazarPlaceholders(campana.contenido || "", cliente).replace(/\n/g, "<br>")}</body></html>`;
-      const res = await enviarEmailResend(cliente.email, subject, html, {
-        campana_id,
-        campana_envio_id: envio.id,
-      });
+      const res = await enviarEmailBrevo(
+        cliente.email,
+        cliente.nombre_razon_social || "",
+        subject,
+        html,
+        { campana_id, campana_envio_id: envio.id },
+      );
       await sb.from("campana_envios").update({
         estado: "enviado",
-        proveedor_msg_id: res.id,
+        proveedor_msg_id: res.messageId,
         enviado_at: new Date().toISOString(),
       }).eq("id", envio.id);
       ok++;

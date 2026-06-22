@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { generateObject } from "ai";
-import { google } from "@ai-sdk/google";
+import { mistral } from "@ai-sdk/mistral";
 import { z } from "zod";
 
 /**
@@ -26,10 +26,17 @@ export const extractComisionFn = createServerFn({ method: "POST" })
   .inputValidator((d: { fileBase64: string; mimeType: string }) => d)
   .handler(async ({ data }) => {
     try {
+      if (!process.env.MISTRAL_API_KEY) {
+        return { success: false as const, error: "MISTRAL_API_KEY no configurada — IA deshabilitada temporalmente" };
+      }
       const result = await generateObject({
-        model: google("gemini-1.5-flash"),
+        model: mistral("mistral-medium-latest"),
         schema: ComisionInformeSchema,
         messages: [
+          {
+            role: "system",
+            content: "Responde en espanol. La respuesta debe ser un JSON valido segun el schema indicado.",
+          },
           {
             role: "user",
             content: [

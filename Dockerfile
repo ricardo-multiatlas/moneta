@@ -4,11 +4,11 @@
 #   1. builder: instala dependencias y compila el bundle
 #   2. runtime: solo carga prod deps + dist/ + el wrapper Node
 #
-# Variables de entorno requeridas en runtime:
+# Variables de entorno requeridas en runtime (todas con datacenter UE):
 #   VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY,
 #   SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY,
-#   RESEND_API_KEY, RESEND_FROM_EMAIL (opcional),
-#   GOOGLE_GENERATIVE_AI_API_KEY (opcional),
+#   BREVO_API_KEY, BREVO_FROM_EMAIL, BREVO_FROM_NAME (emails · Brevo Francia),
+#   MISTRAL_API_KEY (IA · Mistral Francia/Suecia),
 #   PORT (Railway lo inyecta; default 3000)
 
 # ---------- Stage 1: builder ----------

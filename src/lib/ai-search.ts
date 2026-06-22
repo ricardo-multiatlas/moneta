@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { generateObject } from "ai";
-import { google } from "@ai-sdk/google";
+import { mistral } from "@ai-sdk/mistral";
 import { z } from "zod";
 import { createClient } from "@supabase/supabase-js";
 
@@ -32,10 +32,13 @@ export const naturalSearchFn = createServerFn({ method: "POST" })
   .inputValidator((d: { prompt: string }) => d)
   .handler(async ({ data }) => {
     try {
+      if (!process.env.MISTRAL_API_KEY) {
+        return { success: false as const, error: "MISTRAL_API_KEY no configurada — IA deshabilitada temporalmente" };
+      }
       const today = new Date().toISOString().split("T")[0];
 
       const result = await generateObject({
-        model: google("gemini-1.5-flash"),
+        model: mistral("mistral-small-latest"),
         schema: QuerySchema,
         messages: [
           {
@@ -43,7 +46,8 @@ export const naturalSearchFn = createServerFn({ method: "POST" })
             content: `Eres un asistente que interpreta búsquedas en lenguaje natural sobre una correduría de seguros española.
 Fecha de hoy: ${today}.
 Convertir frases del estilo "muéstrame los clientes de Sevilla con auto que vence antes de septiembre" en filtros estructurados.
-Si no encaja con ninguna entidad, usa "clientes" por defecto.`,
+Si no encaja con ninguna entidad, usa "clientes" por defecto.
+Responde en espanol. La respuesta debe ser un JSON valido segun el schema indicado.`,
           },
           { role: "user", content: data.prompt },
         ],

@@ -127,7 +127,7 @@ function PresupuestosPage() {
       cliente_id: p.cliente_id,
       tipo: "email",
       asunto: `Presupuesto ${p.numero} enviado`,
-      contenido: `Enviado a ${email}. Estado: ${error ? "simulado (falta deploy Edge Function)" : "enviado vía Resend"}.`,
+      contenido: `Enviado a ${email}. Estado: ${error ? "simulado (falta deploy Edge Function)" : "enviado vía Brevo"}.`,
       fecha: new Date().toISOString(),
     });
     if (error) toast("Se envió por email (simulado, falta deploy Edge Function)", "warning");

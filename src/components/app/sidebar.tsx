@@ -23,6 +23,7 @@ import {
   LayoutGrid,
   Wand2,
   Receipt,
+  Landmark,
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { usePermissions, type Rol } from "@/hooks/use-permissions";
@@ -54,6 +55,7 @@ const nav: NavItem[] = [
   // Facturación: secretaria NO ve financiero
   { to: "/facturacion", label: "Facturación", icon: ReceiptText, allow: ["root", "admin", "jefe_zona", "comercial"] },
   { to: "/recibos", label: "Recibos", icon: Receipt, allow: ["root", "admin", "jefe_zona", "comercial", "secretaria"] },
+  { to: "/conciliacion-bancaria", label: "Conciliación bancaria", icon: Landmark, allow: ["root", "admin", "jefe_zona"] },
   { to: "/captacion", label: "Captación", icon: TrendingUp },
   { to: "/analisis", label: "Análisis", icon: BarChart3, allow: ["root", "admin", "jefe_zona"] },
   { to: "/proyecciones", label: "Proyecciones", icon: TrendingUp, allow: ["root", "admin", "jefe_zona"] },

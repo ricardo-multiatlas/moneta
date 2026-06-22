@@ -44,16 +44,18 @@ const EVENTOS = [
 const eventoLabel = (id: string): string =>
   EVENTOS.find((e) => e.id === id)?.label || id;
 
-// Etiquetas legibles para los tipos de evento que envía Resend al webhook
-// /functions/v1/webhook-resend. El id técnico se mantiene tal cual en BD.
-const RESEND_LABELS: Record<string, string> = {
-  "email.sent": "Email enviado",
-  "email.delivered": "Email entregado",
-  "email.opened": "Email abierto",
-  "email.clicked": "Click en enlace",
-  "email.bounced": "Email rebotado",
-  "email.complained": "Marcado como spam",
-  "email.delivery_delayed": "Entrega retrasada",
+// Etiquetas legibles para los tipos de evento normalizados en BD (campo `tipo`).
+// El webhook adapter (supabase/functions/webhook-resend) mapea los eventos del
+// proveedor (Brevo: delivered/opened/click/hard_bounce/soft_bounce/spam/unsubscribed)
+// a estos códigos internos. La ruta /functions/v1/webhook-resend se conserva
+// para no invalidar redirects ya configurados en el proveedor.
+const EVENT_LABELS: Record<string, string> = {
+  entregado: "Email entregado",
+  abierto: "Email abierto",
+  click: "Click en enlace",
+  rebote: "Email rebotado",
+  spam: "Marcado como spam",
+  baja: "Baja de suscripción",
 };
 
 interface FormW {
@@ -102,7 +104,7 @@ function WebhooksPage() {
       endpsMissing = true;
     }
 
-    // email_eventos (de Resend) — la tabla tiene `recibido_at`, no `created_at`
+    // email_eventos (del proveedor Brevo) — la tabla tiene `recibido_at`, no `created_at`
     let evMissing = false;
     let evData: any[] = [];
     try {
@@ -218,7 +220,7 @@ function WebhooksPage() {
   return (
     <PageShell
       title="Webhooks"
-      subtitle="Endpoints salientes para notificar eventos del sistema y eventos recibidos de Resend."
+      subtitle="Endpoints salientes para notificar eventos del sistema y eventos recibidos del proveedor de email (Brevo)."
       action={
         <div className="flex items-center gap-2">
           <Link
@@ -331,12 +333,12 @@ function WebhooksPage() {
         )}
       </Card>
 
-      {/* B. Eventos recibidos de Resend */}
+      {/* B. Eventos recibidos del proveedor de email (Brevo) */}
       <Card>
         <div className="px-4 py-3 border-b border-border">
           <SectionHeader
             title={`Eventos email recibidos (${eventosRecibidos.length})`}
-            hint="Eventos que Resend manda a /functions/v1/webhook-resend"
+            hint="Eventos que Brevo envía a /functions/v1/webhook-resend (ruta conservada para no romper redirects)"
           />
         </div>
         {eventosRecibidos.length === 0 ? (
@@ -350,25 +352,28 @@ function WebhooksPage() {
                 <th className="px-4 py-2.5 text-[10px] font-medium text-ink-subtle uppercase tracking-wider">Cuándo</th>
                 <th className="px-4 py-2.5 text-[10px] font-medium text-ink-subtle uppercase tracking-wider">Tipo</th>
                 <th className="px-4 py-2.5 text-[10px] font-medium text-ink-subtle uppercase tracking-wider">Destinatario</th>
-                <th className="px-4 py-2.5 text-[10px] font-medium text-ink-subtle uppercase tracking-wider">Resend ID</th>
+                <th className="px-4 py-2.5 text-[10px] font-medium text-ink-subtle uppercase tracking-wider">Message ID</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {eventosRecibidos.map((ev: any) => (
+              {eventosRecibidos.map((ev: any) => {
+                const msgId = ev.provider_msg_id || ev.resend_id || "";
+                return (
                 <tr key={ev.id} className="hover:bg-secondary/30 transition-colors">
                   <td className="px-4 py-3 text-[11px] font-mono text-ink-muted whitespace-nowrap">
                     {new Date(ev.recibido_at || ev.created_at).toLocaleString()}
                   </td>
                   <td className="px-4 py-3 text-[12px]">
-                    <div>{RESEND_LABELS[ev.tipo as keyof typeof RESEND_LABELS] || ev.tipo}</div>
+                    <div>{EVENT_LABELS[ev.tipo as keyof typeof EVENT_LABELS] || ev.tipo}</div>
                     <div className="text-[10px] font-mono text-ink-subtle">{ev.tipo}</div>
                   </td>
                   <td className="px-4 py-3 text-[11.5px] text-ink-muted">{ev.destinatario || "—"}</td>
-                  <td className="px-4 py-3 text-[10.5px] font-mono text-ink-subtle truncate max-w-[180px]" title={ev.resend_id || ""}>
-                    {ev.resend_id || "—"}
+                  <td className="px-4 py-3 text-[10.5px] font-mono text-ink-subtle truncate max-w-[180px]" title={msgId}>
+                    {msgId || "—"}
                   </td>
                 </tr>
-              ))}
+                );
+              })}
             </tbody>
           </table>
         )}

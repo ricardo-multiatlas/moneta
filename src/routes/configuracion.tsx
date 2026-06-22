@@ -370,20 +370,20 @@ function ConfiguracionPage() {
             <SectionHeader title="Servicios externos" />
             <div className="space-y-2 text-[12px]">
               <div className="flex justify-between items-center">
-                <span className="text-ink-subtle">Email (Resend)</span>
+                <span className="text-ink-subtle">Email (Brevo · Francia)</span>
                 <span className="text-success">Edge Function preparada</span>
               </div>
               <div className="text-[10px] text-ink-subtle font-mono leading-relaxed">
                 Despliega con:<br />
                 <code>supabase functions deploy enviar-aviso-vencimiento --no-verify-jwt</code><br />
-                <code>supabase secrets set RESEND_API_KEY=re_xxx</code>
+                <code>supabase secrets set BREVO_API_KEY=xkeysib-...</code>
               </div>
               <div className="flex justify-between items-center pt-2 border-t border-border">
-                <span className="text-ink-subtle">IA Gemini (Google)</span>
+                <span className="text-ink-subtle">IA Mistral (Francia)</span>
                 <span className="text-success">Activo</span>
               </div>
               <div className="text-[10px] text-ink-subtle">
-                Usado para extraer pólizas (PDF) y conciliar comisiones.
+                Usado para extraer pólizas (PDF) y conciliar comisiones. Datacenter UE para cumplir soberanía del dato.
               </div>
             </div>
           </Card>

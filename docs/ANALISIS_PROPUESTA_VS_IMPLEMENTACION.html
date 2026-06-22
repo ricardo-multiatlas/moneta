@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Análisis · Propuesta vs Implementación · Moneta</title>
+<style>
+  @page {
+    size: A4;
+    margin: 22mm 18mm 22mm 18mm;
+    @bottom-center {
+      content: "Análisis · Propuesta vs Implementación · Moneta · página " counter(page) " de " counter(pages);
+      font-family: Inter, sans-serif;
+      font-size: 9pt;
+      color: #888;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 10.5pt;
+    line-height: 1.55;
+    color: #231a1d;
+    background: white;
+  }
+  .serif {
+    font-family: "Playfair Display", Georgia, serif;
+  }
+  header.cover {
+    border-bottom: 2px solid #8b6262;
+    padding-bottom: 18px;
+    margin-bottom: 28px;
+  }
+  .eyebrow {
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    font-size: 9pt;
+    font-weight: 700;
+    color: #8b6262;
+    margin-bottom: 12px;
+  }
+  h1 {
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: 26pt;
+    line-height: 1.15;
+    color: #3d2828;
+    margin-bottom: 10px;
+    font-weight: 500;
+    letter-spacing: -0.015em;
+  }
+  h1 em {
+    font-style: italic;
+    color: #b08a3e;
+  }
+  .meta {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+    font-size: 9.5pt;
+    color: #6e6468;
+  }
+  .meta strong { color: #231a1d; }
+
+  h2 {
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: 17pt;
+    color: #3d2828;
+    margin: 32px 0 14px;
+    font-weight: 500;
+    border-bottom: 1px solid #e0d8db;
+    padding-bottom: 6px;
+    page-break-after: avoid;
+  }
+  h2 em { font-style: italic; color: #b08a3e; }
+
+  h3 {
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: 13pt;
+    color: #3d2828;
+    margin: 20px 0 8px;
+    font-weight: 600;
+    page-break-after: avoid;
+  }
+
+  p { margin-bottom: 10px; }
+  p.lead {
+    font-size: 11pt;
+    color: #6e6468;
+    margin-bottom: 18px;
+    max-width: 70ch;
+  }
+  blockquote {
+    border-left: 3px solid #d4a853;
+    background: rgba(212, 168, 83, 0.06);
+    padding: 12px 16px;
+    margin: 12px 0;
+    font-style: italic;
+    color: #5c3d3d;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 14px 0 20px;
+    font-size: 9.5pt;
+    page-break-inside: auto;
+  }
+  table thead { display: table-header-group; }
+  table tr { page-break-inside: avoid; }
+  table th {
+    background: #3d2828;
+    color: #faf7f4;
+    padding: 9px 10px;
+    text-align: left;
+    font-size: 9pt;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 600;
+  }
+  table td {
+    padding: 9px 10px;
+    border-bottom: 1px solid #e0d8db;
+    vertical-align: top;
+  }
+  table tr:last-child td { border-bottom: none; }
+
+  .ok { color: #1f7a3a; font-weight: 600; }
+  .partial { color: #b08a3e; font-weight: 600; }
+  .ko { color: #B0413E; font-weight: 600; }
+  .warn { color: #B0413E; font-weight: 700; }
+
+  ul, ol { padding-left: 22px; margin: 10px 0 14px; }
+  li { margin-bottom: 6px; }
+
+  .alert {
+    background: rgba(176, 65, 62, 0.07);
+    border-left: 4px solid #B0413E;
+    padding: 14px 18px;
+    margin: 16px 0;
+    border-radius: 4px;
+    page-break-inside: avoid;
+  }
+  .alert strong { color: #B0413E; }
+
+  .info {
+    background: rgba(212, 168, 83, 0.08);
+    border-left: 4px solid #b08a3e;
+    padding: 14px 18px;
+    margin: 16px 0;
+    border-radius: 4px;
+    page-break-inside: avoid;
+  }
+
+  .page-break { page-break-before: always; }
+
+  footer.signoff {
+    margin-top: 40px;
+    padding-top: 16px;
+    border-top: 1px solid #e0d8db;
+    font-size: 9pt;
+    color: #6e6468;
+  }
+  footer.signoff strong { color: #231a1d; }
+</style>
+</head>
+<body>
+
+<header class="cover">
+  <div class="eyebrow">Documento técnico interno · MultiAtlas</div>
+  <h1 class="serif">Análisis · <em>Propuesta vs Implementación</em><br>Moneta · Correduría OS</h1>
+  <div class="meta">
+    <div><strong>Cliente:</strong> Moneta Seguros (Sevilla)</div>
+    <div><strong>Proveedor:</strong> MultiAtlas</div>
+    <div><strong>Fecha del análisis:</strong> 2026-06-21</div>
+    <div><strong>Versión sistema:</strong> v0.10 + adapter Node + SEO/AIO avanzado</div>
+  </div>
+</header>
+
+<p class="lead">
+  Comparativa formal entre los compromisos del documento <em>propuesta-crm-erp-moneta.html</em>
+  (Mayo 2026) y el estado real del sistema implementado al 21 de junio de 2026.
+  El objetivo es identificar dónde estamos cumpliendo lo prometido, dónde nos hemos
+  desviado, y qué acciones quedan para cerrar el alcance comercial al 100&nbsp;%.
+</p>
+
+<h2 class="serif">Bloque 4 · <em>Los 6 módulos del sistema</em></h2>
+
+<table>
+  <thead>
+    <tr>
+      <th style="width: 3%;">#</th>
+      <th style="width: 30%;">Módulo prometido</th>
+      <th style="width: 12%;">Estado</th>
+      <th>Notas técnicas</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td><strong>CRM Clientes</strong> con ficha 360° y búsqueda en lenguaje natural</td>
+      <td class="ok">✅ COMPLETO</td>
+      <td><code>clientes.tsx</code>, <code>clientes.$id.tsx</code>. Búsqueda IA en <code>src/lib/ai-search.ts</code> con Gemini 1.5 Flash. La intención se estructura (no SQL libre) — protección contra inyección.</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td><strong>Pólizas</strong> con alta IA desde PDF + histórico + anexos</td>
+      <td class="ok">✅ COMPLETO</td>
+      <td><code>extractPolicyFn</code> en <code>polizas.tsx</code> con Gemini, <code>pdf_url</code> en BD, ciclo de estados (activa, suspendida, anulada).</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td><strong>Vencimientos automáticos</strong> con email pre-rellenado a 60 días</td>
+      <td class="ok">✅ COMPLETO</td>
+      <td><code>vencimientos.tsx</code> + <code>vencimientos.calendario.tsx</code> + Edge Function <code>enviar-aviso-vencimiento</code>.</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td><strong>Comisiones reconciliadas</strong> con IA por aseguradora</td>
+      <td class="ok">✅ COMPLETO</td>
+      <td><code>extractComisionFn</code> en <code>ai-comisiones.ts</code>. Extrae líneas (número póliza, tomador, importe) de PDF/CSV con Gemini.</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td><strong>Facturación integrada</strong> + exportación A3 / Contasol / Sage + conciliación bancaria semi-automática</td>
+      <td class="partial">🟡 PARCIAL</td>
+      <td><code>facturacion.tsx</code> emite minutas/facturas. <span class="warn">NO existe export A3/Contasol/Sage.</span> <span class="warn">NO existe conciliación bancaria automática.</span> Solo edición manual de recibos cobrados/devueltos.</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td><strong>Captación</strong> con trazabilidad lead → póliza + ROI por canal + conversión por comercial</td>
+      <td class="ok">✅ COMPLETO</td>
+      <td><code>captacion.tsx</code> calcula <code>porCanal</code> con leads, ganados, valor total. ROI por canal real desde BD.</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="alert">
+  <strong>Brechas del Bloque 4 (módulo 5):</strong>
+  <ul style="margin-top: 6px;">
+    <li><strong>Exportación a A3 / Contasol / Sage:</strong> no hay módulo ni función generadora del fichero AEF (formato Contasol) ni el SIE / A3 estándar.</li>
+    <li><strong>Conciliación bancaria semi-automática:</strong> solo tenemos marcado manual de recibo cobrado/devuelto. No hay matching automático contra extracto bancario (N43 / CSV).</li>
+  </ul>
+</div>
+
+<h2 class="serif">Bloque 5 · <em>El día después</em> (beneficios prometidos)</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th style="width: 50%;">Beneficio prometido</th>
+      <th style="width: 12%;">Realista</th>
+      <th>Notas</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>8-12 h/semana recuperadas</td><td class="ok">✅ Sí</td><td>IA en pólizas + comisiones + vencimientos automáticos justifica el ahorro.</td></tr>
+    <tr><td>Cero pólizas perdidas por olvido</td><td class="ok">✅ Sí</td><td>Vencimientos automáticos + Edge Function activa.</td></tr>
+    <tr><td>Decisiones con datos reales</td><td class="ok">✅ Sí</td><td>Constructor de reportes + ROI por canal + dashboard personalizable.</td></tr>
+    <tr><td>RGPD por diseño</td><td class="ok">✅ Sí</td><td>Audit log con IP vía RPC <code>audit_perform</code>, RLS por rol, base en EU.</td></tr>
+    <tr><td>Sin dependencia de personas</td><td class="ok">✅ Sí</td><td>Toda la información en BD + multi-rol.</td></tr>
+    <tr><td>Plataforma para crecer 3 → 30 personas</td><td class="ok">✅ Sí</td><td>RLS escalable, zonas, jefes de zona, comerciales.</td></tr>
+  </tbody>
+</table>
+
+<p>Los 6 beneficios del Bloque 5 son entregables con seguridad si los 6 módulos
+del Bloque 4 funcionan en producción.</p>
+
+<h2 class="serif">Bloque 7 · <em>Calendario de las 14 semanas</em></h2>
+
+<p>Si la firma fue en Mayo 2026 (fecha del documento), al 21 de junio de 2026
+estamos en la <strong>semana ~6</strong>.</p>
+<ul>
+  <li>Según calendario prometido: <strong>debería estar entregándose Fase 1 LIVE</strong> (CRM + Pólizas).</li>
+  <li>Realidad técnica: las 3 fases están <strong>completas en código</strong> (CRM + Pólizas + Vencimientos + Comisiones + Facturación básica + Captación).</li>
+  <li><strong>Estamos adelantados ~8 semanas</strong> respecto al calendario.</li>
+</ul>
+<p>La única condición para considerar la Fase 3 LIVE cerrada al 100&nbsp;% son las
+dos brechas pendientes del módulo 5 (export contable y conciliación bancaria).</p>
+
+<div class="page-break"></div>
+
+<h2 class="serif">Bloque 8 · <em>Soberanía del dato</em> &nbsp;⚠️ DESVÍO CRÍTICO</h2>
+
+<blockquote>
+  "Tu sistema corre en infraestructura propia MultiAtlas, en Madrid.
+  Bajo legislación española. Bajo RGPD europeo. Sin pasar por ninguna nube
+  americana ni asiática para nada."
+</blockquote>
+
+<p>Estado real del sistema productivo al 21 de junio de 2026:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="width: 16%;">Componente</th>
+      <th style="width: 26%;">Promesa propuesta</th>
+      <th style="width: 28%;">Realidad técnica</th>
+      <th style="width: 12%;">Brecha</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Base de datos</strong></td>
+      <td>Madrid · infraestructura propia MultiAtlas</td>
+      <td>Supabase managed en <strong>eu-west-3 (París)</strong></td>
+      <td class="partial">🟡 EU sí, NO Madrid, NO propia</td>
+    </tr>
+    <tr>
+      <td><strong>Hosting app</strong></td>
+      <td>Madrid · MultiAtlas</td>
+      <td>Railway (cuenta personal, US East) + Cloudflare Workers (CDN global)</td>
+      <td class="ko">❌ NO Madrid, NO propia</td>
+    </tr>
+    <tr>
+      <td><strong>Emails</strong></td>
+      <td>Sin nube americana</td>
+      <td>Resend (USA)</td>
+      <td class="ko">❌ USA</td>
+    </tr>
+    <tr>
+      <td><strong>IA (PDFs + búsqueda)</strong></td>
+      <td>Sin nube americana</td>
+      <td>Google Gemini (USA) procesando datos sensibles</td>
+      <td class="ko">❌ USA · datos sensibles</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="alert">
+  <strong>Implicación legal y comercial:</strong>
+  <p style="margin-top: 6px;">El Bloque 8 vende soberanía como argumento contractual. Diego firmó en parte por eso.</p>
+  <ul style="margin-top: 6px;">
+    <li>Datos personales en proveedores USA sin <em>Transfer Impact Assessment</em> ni cláusulas SCC documentadas → riesgo RGPD real.</li>
+    <li>Discrepancia entre material comercial y realidad técnica → expone a MultiAtlas si Diego la detecta o si hay auditoría.</li>
+  </ul>
+  <p style="margin-top: 6px;">El "servidor tres con UPS" de Rubén es la pieza que cierra esta brecha. Hasta que el sistema corra ahí (y la IA + emails se sustituyan o se regularicen vía DPA), <strong>la promesa del Bloque 8 NO se cumple</strong>.</p>
+</div>
+
+<h2 class="serif">Bloque 9 · <em>Aplicación y propiedad</em> (al salir del servicio)</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th style="width: 45%;">Promesa</th>
+      <th style="width: 15%;">Estado</th>
+      <th>Notas</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>Aplicación instalada y operativa al salir</td><td class="ok">✅ Cumplido</td><td><code>Dockerfile</code> + <code>server-node.mjs</code> portable. <code>docker build &amp;&amp; docker run</code> y queda corriendo.</td></tr>
+    <tr><td>Copia completa BD en formato estándar</td><td class="ok">✅ Cumplido</td><td>Supabase Postgres exportable + módulo <code>configuracion.backup</code> con JSON descargable.</td></tr>
+    <tr><td>Cero penalización salida primer año</td><td class="partial">🟡 Contractual</td><td>No técnico, depende del contrato marco firmado.</td></tr>
+    <tr><td>Titularidad software base permanece en MultiAtlas</td><td class="partial">🟡 Contractual</td><td>No técnico, cláusula del contrato.</td></tr>
+  </tbody>
+</table>
+
+<h2 class="serif">Bloque 10 · <em>Garantías y soporte</em></h2>
+
+<table>
+  <thead>
+    <tr>
+      <th style="width: 38%;">Promesa</th>
+      <th style="width: 14%;">Estado</th>
+      <th>Notas</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>Plazo 14 semanas firma → LIVE completo</td><td class="ok">✅ Adelantado</td><td>A semana ~6 ya tenemos lo que debería ser semana 14.</td></tr>
+    <tr><td>3 meses garantía sobre cada fase entregada</td><td class="partial">🟡 Contractual</td><td>Política de soporte, no condición técnica.</td></tr>
+    <tr><td>Hosting + copias diarias + SSL + monitorización 24/7</td><td class="partial">🟡 Mixto</td><td>SSL ✅. Hosting ✅ pero NO en Madrid. Copias diarias dependen de plan Supabase. <span class="warn">Monitorización 24/7 NO configurada</span> (sin UptimeRobot/StatusCake/Pingdom).</td></tr>
+    <tr><td>Email + WhatsApp Business como canal directo</td><td class="partial">🟡 Mixto</td><td>Email funciona. WhatsApp Business pendiente de alta y conexión al sistema de soporte.</td></tr>
+    <tr><td>NDA mutuo firmado al arrancar</td><td class="partial">🟡 Contractual</td><td>Depende del contrato firmado.</td></tr>
+  </tbody>
+</table>
+
+<h2 class="serif">Resumen ejecutivo</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th style="width: 24%;">Bloque</th>
+      <th style="width: 30%;">Cumplimiento</th>
+      <th>Acción pendiente</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>4 · Módulos del sistema</strong></td><td><strong>5/6 completos</strong>, 1 parcial (facturación)</td><td>Implementar export A3/Contasol/Sage + matching bancario semi-automático.</td></tr>
+    <tr><td><strong>5 · Beneficios "día después"</strong></td><td>6/6 entregables</td><td>Solo requiere estabilidad de producción.</td></tr>
+    <tr><td><strong>7 · Fases 14 semanas</strong></td><td><strong>Adelantado ~8 semanas</strong></td><td>Mantener calidad para cierre Fase 3 LIVE.</td></tr>
+    <tr><td><strong>8 · Soberanía dato Madrid</strong></td><td class="warn">🚨 NO cumple</td><td>Migrar al servidor de Rubén (Madrid). Plantear alternativa europea para Gemini (Mistral / Anthropic EU) y Resend (Brevo / Mailgun EU), o documentar SCC/DPA con los actuales.</td></tr>
+    <tr><td><strong>9 · Propiedad y salida</strong></td><td>Técnicamente OK</td><td>Sin acción técnica.</td></tr>
+    <tr><td><strong>10 · Garantías + monitorización 24/7</strong></td><td>Parcial</td><td>Configurar UptimeRobot / StatusCake apuntando a <code>/manifest.webmanifest</code>. Conectar canal WhatsApp Business al soporte.</td></tr>
+  </tbody>
+</table>
+
+<h2 class="serif">Las 4 prioridades para cumplir 100 % la propuesta</h2>
+
+<div class="info">
+  <ol>
+    <li><strong>Migrar al servidor de Rubén</strong> (Madrid) — cierra el Bloque 8 en su parte de hosting de la aplicación y base de datos.</li>
+    <li><strong>Exportación A3 / Contasol / Sage</strong> en el módulo facturación — cierra el Bloque 4 módulo 5.</li>
+    <li><strong>Conciliación bancaria semi-automática</strong> (subida de extracto N43 o CSV bancario y matching contra recibos) — cierra el Bloque 4 módulo 5.</li>
+    <li><strong>Decisión sobre IA y emails</strong>: o se sustituyen por proveedores EU (Mistral, Anthropic EU, Brevo, Mailgun EU), o se firman las SCC y DPA con Google y Resend y se documentan internamente. Sin esto el riesgo RGPD persiste.</li>
+  </ol>
+</div>
+
+<footer class="signoff">
+  <p><strong>Documento generado el 2026-06-21.</strong> Versión del sistema analizada: commit <code>4aa4c96</code> en <code>makeflowia-lab/moneta-unified-hub</code>.</p>
+  <p style="margin-top: 6px;">Para uso interno MultiAtlas. No distribuir al cliente sin revisión previa por Rubén Toledano.</p>
+</footer>
+
+</body>
+</html>
